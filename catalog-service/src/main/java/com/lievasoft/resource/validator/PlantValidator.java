@@ -5,37 +5,43 @@ import com.lievasoft.dto.plant.PlantCreateDTO;
 import com.lievasoft.entity.Country;
 import jakarta.enterprise.context.ApplicationScoped;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @ApplicationScoped
 public class PlantValidator {
 
-    public void validateCreation(PlantCreateDTO plantCreateDTO) {
+    public void validatePlantCreateDTO(PlantCreateDTO plantCreateDTO) {
         if (isScientificNameInvalid(plantCreateDTO.scientificName()))
             throw new IllegalArgumentException("scientific name must not be null, empty or blank");
 
-        Collection<CommonNameCreateDTO> commonNamesDTO = plantCreateDTO.commonNamesDTO();
-        if (isCollectionNullOrEmpty(commonNamesDTO))
-            throw new IllegalArgumentException("common names collection must not be null or empty");
-
-        Collection<String> names = commonNamesDTO.stream().map(CommonNameCreateDTO::name).toList();
-        if (hasSomeNameInvalid(names))
-            throw new IllegalArgumentException("In common names exists values null, empty or blank");
-
-        List<Country> countries = commonNamesDTO.stream().map(CommonNameCreateDTO::country).toList();
-        if (hasDuplicateCountries(countries))
-            throw new IllegalArgumentException("countries of the common names must be uniques");
-
-        List<Boolean> selections = commonNamesDTO.stream().map(CommonNameCreateDTO::isSelected).toList();
-        if (existsMoreOneSelected(selections))
-            throw new IllegalArgumentException("It must has zero or one values in selection");
+        validateCommonNamesDTO(plantCreateDTO.commonNamesDTO());
     }
 
     private boolean isScientificNameInvalid(String scientificName) {
         return scientificName == null || scientificName.isBlank();
+    }
+
+    public void validateCommonNamesDTO(Collection<CommonNameCreateDTO> commonNamesToValidate) {
+        if (isCollectionNullOrEmpty(commonNamesToValidate))
+            throw new IllegalArgumentException("common names collection must not be null or empty");
+
+        Collection<String> names = new ArrayList<>();
+        List<Country> countries = new ArrayList<>();
+        Collection<Boolean> selections = new ArrayList<>();
+        for (var commonNameCreateDto : commonNamesToValidate) {
+            names.add(commonNameCreateDto.name());
+            countries.add(commonNameCreateDto.country());
+            selections.add(commonNameCreateDto.isSelected());
+        }
+
+        if (hasSomeNameInvalid(names))
+            throw new IllegalArgumentException("In common names exists values null, empty or blank");
+
+        else if (hasDuplicateCountries(countries))
+            throw new IllegalArgumentException("countries of the common names must be uniques");
+
+        else if (existsMoreOneSelected(selections))
+            throw new IllegalArgumentException("It must has zero or one values in selection");
     }
 
     private <T> boolean isCollectionNullOrEmpty(Collection<T> collection) {

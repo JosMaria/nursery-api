@@ -1,5 +1,6 @@
 package com.lievasoft.resource;
 
+import com.lievasoft.dto.plant.CommonNameCreateDTO;
 import com.lievasoft.dto.plant.PlantCreateDTO;
 import com.lievasoft.resource.validator.PlantValidator;
 import com.lievasoft.service.PlantService;
@@ -8,9 +9,12 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Response;
+import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.RestPath;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 import java.net.URI;
+import java.util.Collection;
 
 @Path("/api/v1/plants")
 public class PlantResource {
@@ -25,13 +29,26 @@ public class PlantResource {
 
     @POST
     public Response create(PlantCreateDTO plantCreateDTO) {
-        plantValidator.validateCreation(plantCreateDTO);
+        plantValidator.validatePlantCreateDTO(plantCreateDTO);
         var plantCreateResponse = plantService.create(plantCreateDTO);
         URI location = URI.create("/api/v1/plants/" + plantCreateResponse.id());
-        return Response.created(location)
-                .entity(plantCreateResponse)
-                .build();
+        return Response.created(location).entity(plantCreateResponse).build();
     }
+
+    @POST
+    @Path("/{id}/images")
+    public Response insertImage(@RestPath("id") Long plantId, @RestForm("file") FileUpload imageUpload) {
+        plantService.insertImage(plantId, imageUpload);
+        return Response.ok().build();
+    }
+
+    @POST
+    @Path("common-names")
+    public Response createCommonNames(Collection<CommonNameCreateDTO> commonNameCreateDTO) {
+        plantValidator.validateCommonNamesDTO(commonNameCreateDTO);
+        return Response.ok().build();
+    }
+
 
     @DELETE
     @Path("/{id}")

@@ -16,15 +16,24 @@ import io.quarkus.redis.datasource.hash.HashCommands;
 import io.quarkus.redis.datasource.keys.KeyCommands;
 import jakarta.enterprise.context.ApplicationScoped;
 
+import org.jboss.logging.Logger;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+
+
 import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class PlantService {
+
+    private static final Logger LOG = Logger.getLogger(PlantService.class);
+    private static final String IMAGE_PATH = "/Users/josmaria/project/images";
 
     private final HashCommands<String, String, String> hashCommands;
     private final KeyCommands<String> keyCommands;
@@ -37,6 +46,7 @@ public class PlantService {
     }
 
     public PlantCreateResponse create(PlantCreateDTO plantCreateDTO) {
+
         var plantToPersist = new Plant(plantCreateDTO);
         var taxonomyToPersist = new Taxonomy(plantCreateDTO.taxonomyDTO());
         Set<CommonName> commonNamesToPersist = plantCreateDTO.commonNamesDTO()
@@ -53,6 +63,36 @@ public class PlantService {
                 plantCreateDTO.taxonomyDTO(),
                 plantCreateDTO.commonNamesDTO()
         );
+    }
+
+    public void insertImage(Long plantId, FileUpload imageUpload) {
+        var obtainedPlant = plantRepository.findByIdOptional(plantId)
+                .orElseThrow(() -> new PlantNotFoundException(plantId));
+        if (imageUpload == null || imageUpload.filePath() == null)
+            throw new IllegalArgumentException("Image file is required");
+
+        var filePath = imageUpload.uploadedFile();
+        if (filePath != null && Files.exists(filePath)) {
+            try {
+                byte[] imageBytes = Files.readAllBytes(filePath);
+
+                Path plantDir = Paths.get(IMAGE_PATH, "plant_%s".formatted(plantId));
+                if (!Files.exists(plantDir))
+                    Files.createDirectories(plantDir);
+
+                String filename = UUID.randomUUID().toString();
+                Path filePathToPersist = plantDir.resolve(filename);
+                Files.write(filePathToPersist, imageBytes);
+                LOG.infof("Image saved: {}", filePathToPersist);
+
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else throw new IllegalArgumentException("Image file not found");
+    }
+
+    public PlantCreateResponse createCommonNames() {
+        return null;
     }
 
     public PlantResponse removeById(Long plantId) {
