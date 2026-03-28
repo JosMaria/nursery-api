@@ -65,30 +65,33 @@ public class PlantService {
         );
     }
 
-    public void insertImage(Long plantId, FileUpload imageUpload) {
+    public String insertImage(Long plantId, FileUpload imageUpload) {
         var obtainedPlant = plantRepository.findByIdOptional(plantId)
                 .orElseThrow(() -> new PlantNotFoundException(plantId));
-        if (imageUpload == null || imageUpload.filePath() == null)
-            throw new IllegalArgumentException("Image file is required");
 
-        var filePath = imageUpload.uploadedFile();
+//        if (imageUpload == null || imageUpload.filePath() == null)
+//            throw new IllegalArgumentException("Image file is required");
+        return uploadToFileSystem(plantId, imageUpload);
+    }
+
+    private String uploadToFileSystem(Long plantId, FileUpload imageUpload) {
+        Path filePath = imageUpload.uploadedFile();
         if (filePath != null && Files.exists(filePath)) {
             try {
+                Path directoryPath = Paths.get(IMAGE_PATH, "plant_%s".formatted(plantId));
+                if (!Files.exists(directoryPath))
+                    Files.createDirectories(directoryPath);
+
                 byte[] imageBytes = Files.readAllBytes(filePath);
-
-                Path plantDir = Paths.get(IMAGE_PATH, "plant_%s".formatted(plantId));
-                if (!Files.exists(plantDir))
-                    Files.createDirectories(plantDir);
-
-                String filename = UUID.randomUUID().toString();
-                Path filePathToPersist = plantDir.resolve(filename);
+                var filename = UUID.randomUUID().toString();
+                var filePathToPersist = directoryPath.resolve(filename + ".png");
                 Files.write(filePathToPersist, imageBytes);
-                LOG.infof("Image saved: {}", filePathToPersist);
-
+                LOG.infof("Image saved in filesystem: %s", filePathToPersist);
+                return filePathToPersist.toString();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        } else throw new IllegalArgumentException("Image file not found");
+        } else throw new IllegalArgumentException("Image file path is invalid");
     }
 
     public PlantCreateResponse createCommonNames() {
