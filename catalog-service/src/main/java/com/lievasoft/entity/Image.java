@@ -32,12 +32,11 @@ public class Image {
     public Image() {
     }
 
-    public Image(String url, String fileName, long fileSize, String contentType, Plant plant) {
+    public Image(String url, String fileName, long fileSize, String contentType) {
         this.url = url;
         this.fileName = fileName;
         this.fileSize = fileSize;
         this.contentType = contentType;
-        this.plant = plant;
     }
 
     public Long getId() {

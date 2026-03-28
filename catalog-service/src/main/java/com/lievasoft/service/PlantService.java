@@ -80,7 +80,8 @@ public class PlantService {
         var urlLocal = prefixFileSystem + uploadImageResponse.path();
         var fileSize = imageUpload.size();
         var contentType = imageUpload.contentType();
-        var imageToPersist = new Image(urlLocal, uploadImageResponse.filename, fileSize, contentType, obtainedPlant);
+        var imageToPersist = new Image(urlLocal, uploadImageResponse.filename, fileSize, contentType);
+        obtainedPlant.addImage(imageToPersist);
         return new PlantImageResponse(imageToPersist);
     }
 

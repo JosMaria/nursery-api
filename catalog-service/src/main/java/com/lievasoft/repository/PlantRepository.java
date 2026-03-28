@@ -22,6 +22,11 @@ public class PlantRepository implements PanacheRepository<Plant> {
         persist(plant);
     }
 
+
+//    public Plant findById(Long id) {
+//        find("SELECT p FROM Plant p WHERE ")
+//    }
+
     @Transactional
     public void remove(Plant plant) {
         delete(plant);

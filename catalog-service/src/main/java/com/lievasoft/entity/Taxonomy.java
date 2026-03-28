@@ -11,8 +11,7 @@ public class Taxonomy {
     private Long id;
 
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "plant_id")
+    @OneToOne(mappedBy = "taxonomy")
     private Plant plant;
 
     private String kingdom;

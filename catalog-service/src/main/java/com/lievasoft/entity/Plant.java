@@ -60,11 +60,15 @@ public class Plant {
     @Column(name = "scientific_name", unique = true)
     private String scientificName;
 
-    @OneToOne(mappedBy = "plant", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "taxonomy_id")
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private Taxonomy taxonomy;
 
     @OneToMany(mappedBy = "plant", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private final Set<CommonName> commonNames = new HashSet<>();
+
+    @OneToMany(mappedBy = "plant", cascade = CascadeType.PERSIST)
+    private final Set<Image> images = new HashSet<>();
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
@@ -120,6 +124,11 @@ public class Plant {
             this.commonNames.add(commonName);
             commonName.setPlant(this);
         });
+    }
+
+    public void addImage(Image image) {
+        this.images.add(image);
+        image.setPlant(this);
     }
 
     public void addTaxonomy(Taxonomy taxonomy) {
