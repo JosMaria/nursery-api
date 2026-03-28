@@ -2,20 +2,24 @@ package com.lievasoft.service;
 
 import com.lievasoft.dto.plant.PlantCreateDTO;
 import com.lievasoft.dto.plant.PlantCreateResponse;
+import com.lievasoft.dto.plant.PlantImageResponse;
 import com.lievasoft.dto.plant.PlantResponse;
 import com.lievasoft.dto.response.PlantCardResponse;
 import com.lievasoft.dto.response.PlantDetailsResponse;
 import com.lievasoft.entity.CommonName;
+import com.lievasoft.entity.Image;
 import com.lievasoft.entity.Plant;
 import com.lievasoft.entity.Taxonomy;
+import com.lievasoft.enums.ImageExtension;
 import com.lievasoft.exception.PlantNotFoundException;
 import com.lievasoft.repository.PlantRepository;
 import io.quarkus.cache.CacheResult;
+import io.quarkus.hibernate.orm.runtime.cdi.QuarkusArcBeanContainer;
 import io.quarkus.redis.datasource.RedisDataSource;
 import io.quarkus.redis.datasource.hash.HashCommands;
 import io.quarkus.redis.datasource.keys.KeyCommands;
 import jakarta.enterprise.context.ApplicationScoped;
-
+import jakarta.transaction.Transactional;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 
@@ -25,8 +29,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.*;
-
-
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -38,15 +40,16 @@ public class PlantService {
     private final HashCommands<String, String, String> hashCommands;
     private final KeyCommands<String> keyCommands;
     private final PlantRepository plantRepository;
+    private final QuarkusArcBeanContainer quarkusArcBeanContainer;
 
-    public PlantService(RedisDataSource redisDataSource, PlantRepository plantRepository) {
+    public PlantService(RedisDataSource redisDataSource, PlantRepository plantRepository, QuarkusArcBeanContainer quarkusArcBeanContainer) {
         this.hashCommands = redisDataSource.hash(String.class);
         this.keyCommands = redisDataSource.key();
         this.plantRepository = plantRepository;
+        this.quarkusArcBeanContainer = quarkusArcBeanContainer;
     }
 
     public PlantCreateResponse create(PlantCreateDTO plantCreateDTO) {
-
         var plantToPersist = new Plant(plantCreateDTO);
         var taxonomyToPersist = new Taxonomy(plantCreateDTO.taxonomyDTO());
         Set<CommonName> commonNamesToPersist = plantCreateDTO.commonNamesDTO()
@@ -65,16 +68,23 @@ public class PlantService {
         );
     }
 
-    public String insertImage(Long plantId, FileUpload imageUpload) {
+    @Transactional
+    public PlantImageResponse insertImage(Long plantId, FileUpload imageUpload) {
         var obtainedPlant = plantRepository.findByIdOptional(plantId)
                 .orElseThrow(() -> new PlantNotFoundException(plantId));
 
 //        if (imageUpload == null || imageUpload.filePath() == null)
 //            throw new IllegalArgumentException("Image file is required");
-        return uploadToFileSystem(plantId, imageUpload);
+        var prefixFileSystem = "file://";
+        var uploadImageResponse = uploadToFileSystem(plantId, imageUpload);
+        var urlLocal = prefixFileSystem + uploadImageResponse.path();
+        var fileSize = imageUpload.size();
+        var contentType = imageUpload.contentType();
+        var imageToPersist = new Image(urlLocal, uploadImageResponse.filename, fileSize, contentType, obtainedPlant);
+        return new PlantImageResponse(imageToPersist);
     }
 
-    private String uploadToFileSystem(Long plantId, FileUpload imageUpload) {
+    private UploadImageResponse uploadToFileSystem(Long plantId, FileUpload imageUpload) {
         Path filePath = imageUpload.uploadedFile();
         if (filePath != null && Files.exists(filePath)) {
             try {
@@ -83,15 +93,33 @@ public class PlantService {
                     Files.createDirectories(directoryPath);
 
                 byte[] imageBytes = Files.readAllBytes(filePath);
-                var filename = UUID.randomUUID().toString();
-                var filePathToPersist = directoryPath.resolve(filename + ".png");
+                var imageExtension = getExtensionByContentType(imageUpload.contentType());
+                var filename = UUID.randomUUID() + "." + imageExtension.getExtension();
+                var filePathToPersist = directoryPath.resolve(filename);
                 Files.write(filePathToPersist, imageBytes);
-                LOG.infof("Image saved in filesystem: %s", filePathToPersist);
-                return filePathToPersist.toString();
+                LOG.infof("Image saved in filesystem at directory: %s, filename: %s", directoryPath, filename);
+                return new UploadImageResponse(filePathToPersist.toString(), filename);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         } else throw new IllegalArgumentException("Image file path is invalid");
+    }
+
+    record UploadImageResponse(
+            String path,
+            String filename
+    ) {
+    }
+
+    private ImageExtension getExtensionByContentType(String contentType) {
+        return switch (contentType) {
+            case "image/webp" -> ImageExtension.WEBP;
+            case "image/gif" -> ImageExtension.GIF;
+            case "image/png" -> ImageExtension.PNG;
+            case "image/jpeg" -> ImageExtension.JPEG;
+            case "image/jpg" -> ImageExtension.JPG;
+            default -> throw new IllegalArgumentException("Invalid content type for image");
+        };
     }
 
     public PlantCreateResponse createCommonNames() {

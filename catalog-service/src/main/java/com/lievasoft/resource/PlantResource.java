@@ -38,9 +38,9 @@ public class PlantResource {
     @POST
     @Path("/{id}/images")
     public Response insertImage(@RestPath("id") Long plantId, @RestForm("file") FileUpload imageUpload) {
-        String pathResponse = plantService.insertImage(plantId, imageUpload);
+        var plantImageResponse = plantService.insertImage(plantId, imageUpload);
         URI location = URI.create("/api/v1/plants/%s/images".formatted(plantId));
-        return Response.created(location).entity(pathResponse).build();
+        return Response.created(location).entity(plantImageResponse).build();
     }
 
     @POST
