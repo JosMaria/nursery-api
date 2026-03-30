@@ -1,9 +1,6 @@
 package com.lievasoft.service;
 
-import com.lievasoft.dto.plant.PlantCreateDTO;
-import com.lievasoft.dto.plant.PlantCreateResponse;
-import com.lievasoft.dto.plant.PlantImageResponse;
-import com.lievasoft.dto.plant.PlantResponse;
+import com.lievasoft.dto.plant.*;
 import com.lievasoft.dto.response.PlantCardResponse;
 import com.lievasoft.dto.response.PlantDetailsResponse;
 import com.lievasoft.entity.CommonName;
@@ -35,7 +32,7 @@ import java.util.stream.Collectors;
 public class PlantService {
 
     private static final Logger LOG = Logger.getLogger(PlantService.class);
-    private static final String IMAGE_PATH = "/Users/josmaria/project/images";
+    private static final String IMAGE_PATH = "/Users/josmaria/Pictures/plant_images";
 
     private final HashCommands<String, String, String> hashCommands;
     private final KeyCommands<String> keyCommands;
@@ -80,7 +77,7 @@ public class PlantService {
         var urlLocal = prefixFileSystem + uploadImageResponse.path();
         var fileSize = imageUpload.size();
         var contentType = imageUpload.contentType();
-        var imageToPersist = new Image(urlLocal, uploadImageResponse.filename, fileSize, contentType);
+        var imageToPersist = new Image(urlLocal, uploadImageResponse.filename(), fileSize, contentType);
         obtainedPlant.addImage(imageToPersist);
         return new PlantImageResponse(imageToPersist);
     }
@@ -106,10 +103,9 @@ public class PlantService {
         } else throw new IllegalArgumentException("Image file path is invalid");
     }
 
-    record UploadImageResponse(
-            String path,
-            String filename
-    ) {
+    @CacheResult(cacheName = "plant-cards-list")
+    public List<PlantCardResponse> fetchPlantCards() {
+        return plantRepository.fetchPlantCards();
     }
 
     private ImageExtension getExtensionByContentType(String contentType) {
@@ -132,11 +128,6 @@ public class PlantService {
                 .orElseThrow(() -> new PlantNotFoundException(plantId));
         plantRepository.remove(obtainedPlant);
         return new PlantResponse(obtainedPlant);
-    }
-
-    @CacheResult(cacheName = "plant-cards-list")
-    public List<PlantCardResponse> fetchPlantCards() {
-        return plantRepository.fetchPlantCards();
     }
 
     public PlantDetailsResponse fetchPlantDetailsById(Long plantId) {

@@ -34,8 +34,11 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
                 classes = @ConstructorResult(
                         targetClass = PlantCardResponse.class,
                         columns = {
-                                @ColumnResult(name = "common_name", type = String.class),
-                                @ColumnResult(name = "scientific", type = String.class)
+                                @ColumnResult(name = "id", type = Long.class),
+                                @ColumnResult(name = "scientific_name", type = String.class),
+                                @ColumnResult(name = "name", type = String.class),
+                                @ColumnResult(name = "price", type = BigDecimal.class),
+                                @ColumnResult(name = "url", type = String.class)
                         })
         ),
         @SqlResultSetMapping(

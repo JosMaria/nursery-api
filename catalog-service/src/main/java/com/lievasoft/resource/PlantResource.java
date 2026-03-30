@@ -43,6 +43,13 @@ public class PlantResource {
         return Response.created(location).entity(plantImageResponse).build();
     }
 
+    @GET
+    @Path("/cards")
+    public Response fetchPlantCards() {
+        var plantCardsResponse = plantService.fetchPlantCards();
+        return Response.ok(plantCardsResponse).build();
+    }
+
     @POST
     @Path("common-names")
     public Response createCommonNames(Collection<CommonNameCreateDTO> commonNameCreateDTO) {
@@ -56,13 +63,6 @@ public class PlantResource {
     public Response delete(@RestPath("id") Long plantId) {
         var plantResponse = plantService.removeById(plantId);
         return Response.ok(plantResponse).build();
-    }
-
-    @GET
-    @Path("/cards")
-    public Response fetchPlantCards() {
-        var response = plantService.fetchPlantCards();
-        return Response.ok(response).build();
     }
 
     @GET

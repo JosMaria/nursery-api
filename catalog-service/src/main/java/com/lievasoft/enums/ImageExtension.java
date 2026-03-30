@@ -5,7 +5,7 @@ public enum ImageExtension {
     GIF("gif"),
     PNG("png"),
     JPEG("jpeg"),
-    JPG("jpeg");
+    JPG("jpg");
 
     private final String extension;
 
