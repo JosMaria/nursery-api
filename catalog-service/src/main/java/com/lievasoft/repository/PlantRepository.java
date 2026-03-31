@@ -22,6 +22,11 @@ public class PlantRepository implements PanacheRepository<Plant> {
         persist(plant);
     }
 
+    public List<PlantCardResponse> fetchPlantCards() {
+        return getEntityManager()
+                .createNamedQuery(FETCH_PLANT_CARDS_NAME, PlantCardResponse.class)
+                .getResultList();
+    }
 
 //    public Plant findById(Long id) {
 //        find("SELECT p FROM Plant p WHERE ")
@@ -30,12 +35,6 @@ public class PlantRepository implements PanacheRepository<Plant> {
     @Transactional
     public void remove(Plant plant) {
         delete(plant);
-    }
-
-    public List<PlantCardResponse> fetchPlantCards() {
-        return getEntityManager()
-                .createNamedQuery(FETCH_PLANT_CARDS_NAME, PlantCardResponse.class)
-                .getResultList();
     }
 
     public Optional<PlantDetailsResponse> fetchPlantDetailsById(Long plantId) {

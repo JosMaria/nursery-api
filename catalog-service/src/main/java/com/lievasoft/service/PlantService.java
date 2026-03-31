@@ -1,7 +1,6 @@
 package com.lievasoft.service;
 
 import com.lievasoft.dto.plant.*;
-import com.lievasoft.dto.response.ImageCardResponse;
 import com.lievasoft.dto.response.PlantCardResponse;
 import com.lievasoft.dto.response.PlantDetailsResponse;
 import com.lievasoft.entity.CommonName;
@@ -13,7 +12,6 @@ import com.lievasoft.exception.PlantNotFoundException;
 import com.lievasoft.repository.ImageRepository;
 import com.lievasoft.repository.PlantRepository;
 import io.quarkus.cache.CacheResult;
-import io.quarkus.hibernate.orm.runtime.cdi.QuarkusArcBeanContainer;
 import io.quarkus.redis.datasource.RedisDataSource;
 import io.quarkus.redis.datasource.hash.HashCommands;
 import io.quarkus.redis.datasource.keys.KeyCommands;
@@ -29,7 +27,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -42,26 +43,25 @@ public class PlantService {
     private final KeyCommands<String> keyCommands;
     private final PlantRepository plantRepository;
     private final ImageRepository imageRepository;
-    private final QuarkusArcBeanContainer quarkusArcBeanContainer;
 
-    public PlantService(RedisDataSource redisDataSource, PlantRepository plantRepository,
-                        ImageRepository imageRepository, QuarkusArcBeanContainer quarkusArcBeanContainer) {
+    public PlantService(RedisDataSource redisDataSource,
+                        PlantRepository plantRepository,
+                        ImageRepository imageRepository) {
         this.hashCommands = redisDataSource.hash(String.class);
         this.keyCommands = redisDataSource.key();
         this.plantRepository = plantRepository;
         this.imageRepository = imageRepository;
-        this.quarkusArcBeanContainer = quarkusArcBeanContainer;
     }
 
     public PlantCreateResponse create(PlantCreateDTO plantCreateDTO) {
         var plantToPersist = new Plant(plantCreateDTO);
         var taxonomyToPersist = new Taxonomy(plantCreateDTO.taxonomyDTO());
-        Set<CommonName> commonNamesToPersist = plantCreateDTO.commonNamesDTO()
+        var commonNamesToPersist = plantCreateDTO.commonNamesDTO()
                 .stream()
                 .map(CommonName::new)
                 .collect(Collectors.toSet());
 
-        plantToPersist.addTaxonomy(taxonomyToPersist);
+        plantToPersist.setTaxonomy(taxonomyToPersist);
         plantToPersist.addCommonNames(commonNamesToPersist);
         plantRepository.create(plantToPersist);
 
@@ -70,6 +70,12 @@ public class PlantService {
                 plantCreateDTO.taxonomyDTO(),
                 plantCreateDTO.commonNamesDTO()
         );
+    }
+
+    @CacheResult(cacheName = "plant-cards-list")
+    public List<PlantCardResponse> obtainPlantCards() {
+        LOG.info("Obtaining plant cards from database");
+        return plantRepository.fetchPlantCards();
     }
 
     @Transactional
@@ -108,11 +114,6 @@ public class PlantService {
                 throw new RuntimeException(e);
             }
         } else throw new IllegalArgumentException("Image file path is invalid");
-    }
-
-    @CacheResult(cacheName = "plant-cards-list")
-    public List<PlantCardResponse> fetchPlantCards() {
-        return plantRepository.fetchPlantCards();
     }
 
     private ImageExtension getExtensionByContentType(String contentType) {
@@ -160,7 +161,7 @@ public class PlantService {
 
     public Response obtainImageCard(Long plantId) {
         LOG.infof("Obtaining image card for plant with id: %s", plantId);
-         var obtainedImage = imageRepository.fetchImageCard(plantId)
+        var obtainedImage = imageRepository.fetchImageCard(plantId)
                 .orElseThrow(() -> new PlantNotFoundException(plantId));
 
         File file = new File(obtainedImage.url().replace("file://", ""));

@@ -2,7 +2,6 @@ package com.lievasoft.entity;
 
 import com.lievasoft.dto.plant.PlantCreateDTO;
 import com.lievasoft.dto.response.PlantCardResponse;
-import com.lievasoft.dto.response.PlantDetailsResponse;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -10,7 +9,8 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.lievasoft.plant.PlantConstant.*;
+import static com.lievasoft.plant.PlantConstant.FETCH_PLANT_CARDS_NAME;
+import static com.lievasoft.plant.PlantConstant.FETCH_PLANT_CARDS_QUERY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity
@@ -20,13 +20,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
                 name = FETCH_PLANT_CARDS_NAME,
                 query = FETCH_PLANT_CARDS_QUERY,
                 resultSetMapping = "PlantCardsMapping"
-        ),
-        @NamedNativeQuery(
-                name = FETCH_PLANT_DETAILS_NAME,
-                query = FETCH_PLANT_DETAILS_QUERY,
-                resultSetMapping = "PlantDetailsMapping"
-        ),
-
+        )
 })
 @SqlResultSetMappings({
         @SqlResultSetMapping(
@@ -36,38 +30,28 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
                         columns = {
                                 @ColumnResult(name = "id", type = Long.class),
                                 @ColumnResult(name = "scientific_name", type = String.class),
-                                @ColumnResult(name = "name", type = String.class),
+                                @ColumnResult(name = "common_name", type = String.class),
                                 @ColumnResult(name = "price", type = BigDecimal.class),
                                 @ColumnResult(name = "url", type = String.class)
-                        })
-        ),
-        @SqlResultSetMapping(
-                name = "PlantDetailsMapping",
-                classes = @ConstructorResult(
-                        targetClass = PlantDetailsResponse.class,
-                        columns = {
-                                @ColumnResult(name = "id", type = Long.class),
-                                @ColumnResult(name = "common_name", type = String.class),
-                                @ColumnResult(name = "scientific_name", type = String.class),
-                                @ColumnResult(name = "updated_at", type = LocalDateTime.class)
-                        })
+                        }
+                )
         )
 })
 public class Plant {
 
     @Id
-    @SequenceGenerator(name = "sequence", sequenceName = "plant_sequence", allocationSize = 1)
     @GeneratedValue(strategy = SEQUENCE, generator = "sequence")
+    @SequenceGenerator(name = "sequence", sequenceName = "plant_sequence", allocationSize = 1)
     private Long id;
 
     @Column(name = "scientific_name", unique = true)
     private String scientificName;
 
     @JoinColumn(name = "taxonomy_id")
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private Taxonomy taxonomy;
 
-    @OneToMany(mappedBy = "plant", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "plant", cascade = CascadeType.PERSIST)
     private final Set<CommonName> commonNames = new HashSet<>();
 
     @OneToMany(mappedBy = "plant", cascade = CascadeType.PERSIST)
@@ -100,6 +84,7 @@ public class Plant {
 
     public void setTaxonomy(Taxonomy taxonomy) {
         this.taxonomy = taxonomy;
+        taxonomy.setPlant(this);
     }
 
     public BigDecimal getPrice() {
@@ -132,10 +117,5 @@ public class Plant {
     public void addImage(Image image) {
         this.images.add(image);
         image.setPlant(this);
-    }
-
-    public void addTaxonomy(Taxonomy taxonomy) {
-        this.setTaxonomy(taxonomy);
-        taxonomy.setPlant(this);
     }
 }

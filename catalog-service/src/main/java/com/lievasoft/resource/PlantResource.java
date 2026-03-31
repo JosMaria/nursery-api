@@ -32,6 +32,13 @@ public class PlantResource {
         return Response.created(location).entity(plantCreateResponse).build();
     }
 
+    @GET
+    @Path("/cards")
+    public Response fetchPlantCards() {
+        var plantCardsResponse = plantService.obtainPlantCards();
+        return Response.ok(plantCardsResponse).build();
+    }
+
     @POST
     @Path("/{id}/images")
     public Response insertImage(@RestPath("id") Long plantId, @RestForm("file") FileUpload imageUpload) {
@@ -46,13 +53,6 @@ public class PlantResource {
     public Response fetchImage(@RestPath("id") Long plantId) {
         return plantService.obtainImageCard(plantId);
 
-    }
-
-    @GET
-    @Path("/cards")
-    public Response fetchPlantCards() {
-        var plantCardsResponse = plantService.fetchPlantCards();
-        return Response.ok(plantCardsResponse).build();
     }
 
     @POST
