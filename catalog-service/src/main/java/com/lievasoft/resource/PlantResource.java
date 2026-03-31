@@ -4,10 +4,7 @@ import com.lievasoft.dto.plant.CommonNameCreateDTO;
 import com.lievasoft.dto.plant.PlantCreateDTO;
 import com.lievasoft.resource.validator.PlantValidator;
 import com.lievasoft.service.PlantService;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.RestPath;
@@ -41,6 +38,14 @@ public class PlantResource {
         var plantImageResponse = plantService.insertImage(plantId, imageUpload);
         URI location = URI.create("/api/v1/plants/%s/images".formatted(plantId));
         return Response.created(location).entity(plantImageResponse).build();
+    }
+
+    @GET
+    @Path("/{id}/images")
+    @Produces("image/*")
+    public Response fetchImage(@RestPath("id") Long plantId) {
+        return plantService.obtainImageCard(plantId);
+
     }
 
     @GET

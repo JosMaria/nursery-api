@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 public record PlantCardResponse(
         @JsonProperty("id")
         long plantId,
+        @JsonProperty("scientific_name")
         String scientificName,
         @JsonProperty("common_name")
         String commonName,

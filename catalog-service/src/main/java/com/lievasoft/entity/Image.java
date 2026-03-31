@@ -1,11 +1,32 @@
 package com.lievasoft.entity;
 
+import com.lievasoft.dto.response.ImageCardResponse;
 import jakarta.persistence.*;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity
 @Table(name = "images")
+@NamedNativeQuery(
+        name = "Image.fetchImageCard",
+        query = """
+            SELECT url, content_type
+            FROM images
+            WHERE plant_id = :id
+            LIMIT 1;
+        """,
+        resultSetMapping = "ImageCardMapping"
+)
+@SqlResultSetMapping(
+        name = "ImageCardMapping",
+        classes = @ConstructorResult(
+                targetClass = ImageCardResponse.class,
+                columns = {
+                        @ColumnResult(name = "url", type = String.class),
+                        @ColumnResult(name = "content_type", type = String.class)
+                }
+        )
+)
 public class Image {
 
     @Id

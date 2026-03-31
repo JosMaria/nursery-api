@@ -1,6 +1,7 @@
 package com.lievasoft.service;
 
 import com.lievasoft.dto.plant.*;
+import com.lievasoft.dto.response.ImageCardResponse;
 import com.lievasoft.dto.response.PlantCardResponse;
 import com.lievasoft.dto.response.PlantDetailsResponse;
 import com.lievasoft.entity.CommonName;
@@ -9,6 +10,7 @@ import com.lievasoft.entity.Plant;
 import com.lievasoft.entity.Taxonomy;
 import com.lievasoft.enums.ImageExtension;
 import com.lievasoft.exception.PlantNotFoundException;
+import com.lievasoft.repository.ImageRepository;
 import com.lievasoft.repository.PlantRepository;
 import io.quarkus.cache.CacheResult;
 import io.quarkus.hibernate.orm.runtime.cdi.QuarkusArcBeanContainer;
@@ -17,9 +19,11 @@ import io.quarkus.redis.datasource.hash.HashCommands;
 import io.quarkus.redis.datasource.keys.KeyCommands;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.core.Response;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,12 +41,15 @@ public class PlantService {
     private final HashCommands<String, String, String> hashCommands;
     private final KeyCommands<String> keyCommands;
     private final PlantRepository plantRepository;
+    private final ImageRepository imageRepository;
     private final QuarkusArcBeanContainer quarkusArcBeanContainer;
 
-    public PlantService(RedisDataSource redisDataSource, PlantRepository plantRepository, QuarkusArcBeanContainer quarkusArcBeanContainer) {
+    public PlantService(RedisDataSource redisDataSource, PlantRepository plantRepository,
+                        ImageRepository imageRepository, QuarkusArcBeanContainer quarkusArcBeanContainer) {
         this.hashCommands = redisDataSource.hash(String.class);
         this.keyCommands = redisDataSource.key();
         this.plantRepository = plantRepository;
+        this.imageRepository = imageRepository;
         this.quarkusArcBeanContainer = quarkusArcBeanContainer;
     }
 
@@ -149,5 +156,23 @@ public class PlantService {
         Map<String, String> hashToPersist = plantDetails.mapToRedisHash();
         this.hashCommands.hset(key, hashToPersist);
         this.keyCommands.expire(key, Duration.ofMinutes(1));
+    }
+
+    public Response obtainImageCard(Long plantId) {
+        LOG.infof("Obtaining image card for plant with id: %s", plantId);
+         var obtainedImage = imageRepository.fetchImageCard(plantId)
+                .orElseThrow(() -> new PlantNotFoundException(plantId));
+
+        File file = new File(obtainedImage.url().replace("file://", ""));
+        if (file.exists()) {
+            try {
+                byte[] imageBytes = Files.readAllBytes(file.toPath());
+                return Response.ok(imageBytes)
+                        .header("Content-Type", obtainedImage.contentType())
+                        .build();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else throw new PlantNotFoundException(plantId);
     }
 }
