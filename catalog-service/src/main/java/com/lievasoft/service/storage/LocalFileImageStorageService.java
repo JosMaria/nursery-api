@@ -5,6 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,6 +17,7 @@ public class LocalFileImageStorageService implements ImageStorageService {
 
     private static final Logger LOG = Logger.getLogger(LocalFileImageStorageService.class);
 
+    @Override
     public UploadImageResponse uploadImageToFileSystem(Long plantId, FileUpload imageUpload) {
         final var imageDir = "/Users/josmaria/Pictures/plant_images";
         Path filePath = imageUpload.uploadedFile();
@@ -36,6 +38,19 @@ public class LocalFileImageStorageService implements ImageStorageService {
                 throw new RuntimeException(e);
             }
         } else throw new IllegalArgumentException("Image file path is invalid");
+    }
+
+    @Override
+    public byte[] downloadImageFromFileSystem(String filename, String directoryPath) {
+        var imagePath = Paths.get(directoryPath, filename);
+        var file = new File(imagePath.toString());
+        if (file.exists()) {
+            try {
+                return Files.readAllBytes(file.toPath());
+            } catch (IOException e) {
+                throw new IllegalArgumentException(e);
+            }
+        } else throw new IllegalArgumentException("Image file not found");
     }
 
     private ImageExtension getExtensionByContentType(String contentType) {

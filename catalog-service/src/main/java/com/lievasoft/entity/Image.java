@@ -3,18 +3,15 @@ package com.lievasoft.entity;
 import com.lievasoft.dto.response.ImageCardResponse;
 import jakarta.persistence.*;
 
+import static com.lievasoft.plant.PlantConstant.FETCH_IMAGE_PLANT_CARD_NAME;
+import static com.lievasoft.plant.PlantConstant.FETCH_IMAGE_PLANT_CARD_QUERY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity
 @Table(name = "images")
 @NamedNativeQuery(
-        name = "Image.fetchImageCard",
-        query = """
-            SELECT url, content_type
-            FROM images
-            WHERE plant_id = :id
-            LIMIT 1;
-        """,
+        name = FETCH_IMAGE_PLANT_CARD_NAME,
+        query = FETCH_IMAGE_PLANT_CARD_QUERY,
         resultSetMapping = "ImageCardMapping"
 )
 @SqlResultSetMapping(
@@ -22,7 +19,8 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
         classes = @ConstructorResult(
                 targetClass = ImageCardResponse.class,
                 columns = {
-                        @ColumnResult(name = "url", type = String.class),
+                        @ColumnResult(name = "filename", type = String.class),
+                        @ColumnResult(name = "storage_path", type = String.class),
                         @ColumnResult(name = "content_type", type = String.class)
                 }
         )

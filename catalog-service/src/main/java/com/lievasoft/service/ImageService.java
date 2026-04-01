@@ -1,19 +1,28 @@
 package com.lievasoft.service;
 
 import com.lievasoft.dto.plant.PlantImageResponse;
+import com.lievasoft.dto.response.DownloadImageResponse;
 import com.lievasoft.entity.Image;
+import com.lievasoft.repository.ImageRepository;
 import com.lievasoft.repository.PlantRepository;
 import com.lievasoft.service.storage.ImageStorageService;
+import jakarta.enterprise.context.ApplicationScoped;
+import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 
+@ApplicationScoped
 public class ImageService {
+
+    private static final Logger LOG = Logger.getLogger(ImageService.class);
 
     private final ImageStorageService imageStorageService;
     private final PlantRepository plantRepository;
+    private final ImageRepository imageRepository;
 
-    public ImageService(ImageStorageService imageStorageService, PlantRepository plantRepository) {
+    public ImageService(ImageStorageService imageStorageService, PlantRepository plantRepository, ImageRepository imageRepository) {
         this.imageStorageService = imageStorageService;
         this.plantRepository = plantRepository;
+        this.imageRepository = imageRepository;
     }
 
     public PlantImageResponse persist(Long plantId, FileUpload imageUpload) {
@@ -28,5 +37,13 @@ public class ImageService {
 
         persistedPlant.addImage(imageToPersist);
         return new PlantImageResponse(imageToPersist);
+    }
+
+    public DownloadImageResponse obtainImageToCardBy(Long plantId) {
+        var imageCardResponse = imageRepository.getImagePlantCardOrThrowException(plantId);
+        LOG.infof("Downloading image for plant card with id: %s", plantId);
+        byte[] imageBytes = imageStorageService.downloadImageFromFileSystem(
+                imageCardResponse.contentType(), imageCardResponse.storagePath());
+        return new DownloadImageResponse(imageBytes, imageCardResponse.contentType());
     }
 }

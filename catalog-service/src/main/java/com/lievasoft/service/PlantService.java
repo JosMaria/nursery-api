@@ -9,19 +9,14 @@ import com.lievasoft.entity.CommonName;
 import com.lievasoft.entity.Plant;
 import com.lievasoft.entity.Taxonomy;
 import com.lievasoft.exception.PlantNotFoundException;
-import com.lievasoft.repository.ImageRepository;
 import com.lievasoft.repository.PlantRepository;
 import io.quarkus.cache.CacheResult;
 import io.quarkus.redis.datasource.RedisDataSource;
 import io.quarkus.redis.datasource.hash.HashCommands;
 import io.quarkus.redis.datasource.keys.KeyCommands;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.ws.rs.core.Response;
 import org.jboss.logging.Logger;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -36,15 +31,11 @@ public class PlantService {
     private final HashCommands<String, String, String> hashCommands;
     private final KeyCommands<String> keyCommands;
     private final PlantRepository plantRepository;
-    private final ImageRepository imageRepository;
 
-    public PlantService(RedisDataSource redisDataSource,
-                        PlantRepository plantRepository,
-                        ImageRepository imageRepository) {
+    public PlantService(RedisDataSource redisDataSource, PlantRepository plantRepository) {
         this.hashCommands = redisDataSource.hash(String.class);
         this.keyCommands = redisDataSource.key();
         this.plantRepository = plantRepository;
-        this.imageRepository = imageRepository;
     }
 
     public PlantCreateResponse create(PlantCreateDTO plantCreateDTO) {
@@ -102,23 +93,5 @@ public class PlantService {
         Map<String, String> hashToPersist = plantDetails.mapToRedisHash();
         this.hashCommands.hset(key, hashToPersist);
         this.keyCommands.expire(key, Duration.ofMinutes(1));
-    }
-
-    public Response obtainImageCard(Long plantId) {
-        LOG.infof("Obtaining image card for plant with id: %s", plantId);
-        var obtainedImage = imageRepository.fetchImageCard(plantId)
-                .orElseThrow(() -> new PlantNotFoundException(plantId));
-
-        File file = new File(obtainedImage.url().replace("file://", ""));
-        if (file.exists()) {
-            try {
-                byte[] imageBytes = Files.readAllBytes(file.toPath());
-                return Response.ok(imageBytes)
-                        .header("Content-Type", obtainedImage.contentType())
-                        .build();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else throw new PlantNotFoundException(plantId);
     }
 }

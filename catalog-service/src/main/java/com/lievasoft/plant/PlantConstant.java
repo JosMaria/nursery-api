@@ -17,6 +17,14 @@ public class PlantConstant {
                     ) AS cn ON cn.plant_id = p.id
             """;
 
+    public static final String FETCH_IMAGE_PLANT_CARD_NAME = "Image.fetchImageCard";
+    public static final String FETCH_IMAGE_PLANT_CARD_QUERY = """
+                SELECT filename, storage_path, content_type
+                FROM images
+                WHERE plant_id = :id
+                LIMIT 1
+            """;
+
     public static final String FETCH_PLANT_DETAILS_NAME = "Plant.fetchPlantDetailsById";
     public static final String FETCH_PLANT_DETAILS_QUERY = """
                     SELECT id, common_name, scientific_name, is_available, updated_at
