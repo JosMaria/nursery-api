@@ -3,6 +3,7 @@ package com.lievasoft.repository;
 import com.lievasoft.dto.response.PlantCardResponse;
 import com.lievasoft.dto.response.PlantDetailsResponse;
 import com.lievasoft.entity.Plant;
+import com.lievasoft.exception.PlantNotFoundException;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.NoResultException;
@@ -26,6 +27,10 @@ public class PlantRepository implements PanacheRepository<Plant> {
         return getEntityManager()
                 .createNamedQuery(FETCH_PLANT_CARDS_NAME, PlantCardResponse.class)
                 .getResultList();
+    }
+
+    public Plant obtainByIdOrThrowException(Long plantId) {
+        return this.findByIdOptional(plantId).orElseThrow(() -> new PlantNotFoundException(plantId));
     }
 
 //    public Plant findById(Long id) {

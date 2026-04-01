@@ -25,8 +25,8 @@ public class PlantResource {
     }
 
     @POST
-    public Response create(PlantCreateDTO plantCreateDTO) {
-        plantValidator.validatePlantCreateDTO(plantCreateDTO);
+    public Response save(PlantCreateDTO plantCreateDTO) {
+        plantValidator.validate(plantCreateDTO);
         var plantCreateResponse = plantService.create(plantCreateDTO);
         URI location = URI.create("/api/v1/plants/" + plantCreateResponse.id());
         return Response.created(location).entity(plantCreateResponse).build();

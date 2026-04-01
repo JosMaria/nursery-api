@@ -10,7 +10,7 @@ import java.util.*;
 @ApplicationScoped
 public class PlantValidator {
 
-    public void validatePlantCreateDTO(PlantCreateDTO plantCreateDTO) {
+    public void validate(PlantCreateDTO plantCreateDTO) {
         if (isScientificNameInvalid(plantCreateDTO.scientificName()))
             throw new IllegalArgumentException("scientific name must not be null, empty or blank");
 

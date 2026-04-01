@@ -34,11 +34,10 @@ public class Image {
     @SequenceGenerator(name = "sequence", sequenceName = "image_sequence", allocationSize = 1)
     private Long id;
 
-    @Column(nullable = false)
-    private String url;
+    @Column(name = "storage_path", nullable = false)
+    private String storagePath;
 
-    @Column(name = "file_name")
-    private String fileName;
+    private String filename;
 
     @Column(name = "file_size")
     private Long fileSize;
@@ -53,9 +52,9 @@ public class Image {
     public Image() {
     }
 
-    public Image(String url, String fileName, long fileSize, String contentType) {
-        this.url = url;
-        this.fileName = fileName;
+    public Image(String storagePath, String filename, long fileSize, String contentType) {
+        this.storagePath = storagePath;
+        this.filename = filename;
         this.fileSize = fileSize;
         this.contentType = contentType;
     }
@@ -68,20 +67,20 @@ public class Image {
         this.id = id;
     }
 
-    public String getUrl() {
-        return url;
+    public String getStoragePath() {
+        return this.storagePath;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setStoragePath(String storagePath) {
+        this.storagePath = storagePath;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getFilename() {
+        return filename;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     public Long getFileSize() {
