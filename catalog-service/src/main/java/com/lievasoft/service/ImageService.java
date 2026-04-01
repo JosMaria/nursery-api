@@ -7,6 +7,7 @@ import com.lievasoft.repository.ImageRepository;
 import com.lievasoft.repository.PlantRepository;
 import com.lievasoft.service.storage.ImageStorageService;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.transaction.Transactional;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 
@@ -25,6 +26,7 @@ public class ImageService {
         this.imageRepository = imageRepository;
     }
 
+    @Transactional
     public PlantImageResponse persist(Long plantId, FileUpload imageUpload) {
         var persistedPlant = plantRepository.obtainByIdOrThrowException(plantId);
         var uploadImageResponse = imageStorageService.uploadImageToFileSystem(plantId, imageUpload);
@@ -39,11 +41,11 @@ public class ImageService {
         return new PlantImageResponse(imageToPersist);
     }
 
-    public DownloadImageResponse obtainImageToCardBy(Long plantId) {
+    public DownloadImageResponse obtainImageToPlantCardBy(Long plantId) {
         var imageCardResponse = imageRepository.getImagePlantCardOrThrowException(plantId);
         LOG.infof("Downloading image for plant card with id: %s", plantId);
         byte[] imageBytes = imageStorageService.downloadImageFromFileSystem(
-                imageCardResponse.contentType(), imageCardResponse.storagePath());
+                imageCardResponse.filename(), imageCardResponse.storagePath());
         return new DownloadImageResponse(imageBytes, imageCardResponse.contentType());
     }
 }

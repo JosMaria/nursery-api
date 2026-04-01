@@ -12,7 +12,7 @@ import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 import java.net.URI;
 
-@Path("/api/v1")
+@Path("/api/v1/plants")
 public class ImageResource {
 
     private final ImageValidator imageValidator;
@@ -24,7 +24,7 @@ public class ImageResource {
     }
 
     @POST
-    @Path("/plants/{id}/images")
+    @Path("/{id}/images")
     public Response save(@RestPath("id") Long plantId, @RestForm("file") FileUpload imageUpload) {
         imageValidator.validate(imageUpload);
         var plantImageResponse = imageService.persist(plantId, imageUpload);
@@ -33,9 +33,9 @@ public class ImageResource {
     }
 
     @GET
-    @Path("/plants/{id}/images")
+    @Path("/{id}/images")
     public Response fetchImagePlantCard(@RestPath("id") Long plantId) {
-        var downloadImageResponse = imageService.obtainImageToCardBy(plantId);
+        var downloadImageResponse = imageService.obtainImageToPlantCardBy(plantId);
         return Response.ok(downloadImageResponse.imageBytes())
                 .header("Content-Type", downloadImageResponse.contentType())
                 .build();
