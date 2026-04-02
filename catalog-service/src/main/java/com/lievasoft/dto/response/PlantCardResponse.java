@@ -12,6 +12,9 @@ public record PlantCardResponse(
         @JsonProperty("common_name")
         String commonName,
         BigDecimal price,
-        String url
+        @JsonProperty("storage_path_image")
+        String storagePathImage,
+        @JsonProperty("filename_image")
+        String filenameImage
 ) {
 }

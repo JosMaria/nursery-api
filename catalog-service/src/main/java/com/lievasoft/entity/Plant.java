@@ -32,7 +32,8 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
                                 @ColumnResult(name = "scientific_name", type = String.class),
                                 @ColumnResult(name = "common_name", type = String.class),
                                 @ColumnResult(name = "price", type = BigDecimal.class),
-                                @ColumnResult(name = "url", type = String.class)
+                                @ColumnResult(name = "storage_path", type = String.class),
+                                @ColumnResult(name = "filename", type = String.class)
                         }
                 )
         )

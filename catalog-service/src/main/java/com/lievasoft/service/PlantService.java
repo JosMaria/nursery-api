@@ -10,6 +10,8 @@ import com.lievasoft.entity.Plant;
 import com.lievasoft.entity.Taxonomy;
 import com.lievasoft.exception.PlantNotFoundException;
 import com.lievasoft.repository.PlantRepository;
+import com.lievasoft.service.cache.ConstantKeyGenerator;
+import io.quarkus.cache.CacheInvalidate;
 import io.quarkus.cache.CacheResult;
 import io.quarkus.redis.datasource.RedisDataSource;
 import io.quarkus.redis.datasource.hash.HashCommands;
@@ -38,6 +40,7 @@ public class PlantService {
         this.plantRepository = plantRepository;
     }
 
+    @CacheInvalidate(cacheName = "plant-cards-list", keyGenerator = ConstantKeyGenerator.class)
     public PlantCreateResponse create(PlantCreateDTO plantCreateDTO) {
         var plantToPersist = new Plant(plantCreateDTO);
         var taxonomyToPersist = new Taxonomy(plantCreateDTO.taxonomyDTO());
