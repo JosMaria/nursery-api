@@ -7,10 +7,12 @@ import jakarta.enterprise.context.ApplicationScoped;
 import java.lang.reflect.Method;
 
 @ApplicationScoped
-public class ConstantKeyGenerator implements CacheKeyGenerator {
+public class PlantCardKeyGenerator implements CacheKeyGenerator {
+
+    public static final String PLANT_CARDS_LIST_CACHE = "plant-cards-list";
 
     @Override
     public Object generate(Method method, Object... methodParams) {
-        return new DefaultCacheKey("plant-cards-list");
+        return new DefaultCacheKey(PLANT_CARDS_LIST_CACHE);
     }
 }
