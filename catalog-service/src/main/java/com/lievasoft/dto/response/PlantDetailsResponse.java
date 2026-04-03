@@ -1,14 +1,58 @@
 package com.lievasoft.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.lievasoft.dto.plant.CommonNameToPlantDetails;
+import com.lievasoft.dto.plant.PlantTaxonomy;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.List;
 
 public record PlantDetailsResponse(
         Long id,
-        String commonName,
+        @JsonProperty("scientific_name")
         String scientificName,
-        LocalDateTime updatedAt
+        BigDecimal price,
+        @JsonProperty("updated_at")
+        LocalDateTime updatedAt,
+        TaxonomyResponse taxonomy,
+        List<String> urls,
+        @JsonProperty("common_names")
+        List<CommonNameToPlantDetails> commonNames
 ) {
+
+    public PlantDetailsResponse(PlantTaxonomy plantTaxonomy,
+                                List<String> urls,
+                                List<CommonNameToPlantDetails> commonNames) {
+        this(
+                plantTaxonomy.id(),
+                plantTaxonomy.scientificName(),
+                plantTaxonomy.price(),
+                plantTaxonomy.updatedAt(),
+                new TaxonomyResponse(
+                        plantTaxonomy.division(),
+                        plantTaxonomy.taxonomyClass(),
+                        plantTaxonomy.order(),
+                        plantTaxonomy.family(),
+                        plantTaxonomy.genus(),
+                        plantTaxonomy.species()
+                ),
+                urls,
+                commonNames
+        );
+    }
+
+    record TaxonomyResponse(
+            String division,
+            @JsonProperty("class")
+            String taxonomyClass,
+            String order,
+            String family,
+            String genus,
+            String species
+    ) {
+    }
+/*
     public PlantDetailsResponse(Map<String, String> redisPlantHash) {
         this(
                 Long.parseLong(redisPlantHash.get("id")),
@@ -25,5 +69,5 @@ public record PlantDetailsResponse(
                 "scientificName", scientificName,
                 "updatedAt", updatedAt.toString()
         );
-    }
+    }*/
 }

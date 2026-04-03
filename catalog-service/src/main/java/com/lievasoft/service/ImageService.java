@@ -42,7 +42,7 @@ public class ImageService {
     }
 
     public DownloadImageResponse obtainImageToPlantCardBy(Long plantId) {
-        var imageCardResponse = imageRepository.getImagePlantCardOrThrowException(plantId);
+        var imageCardResponse = imageRepository.fetchImagePlantCardOrThrowException(plantId);
         LOG.infof("Downloading image for plant card with id: %s", plantId);
         byte[] imageBytes = imageStorageService.downloadImageFromFileSystem(
                 imageCardResponse.filename(), imageCardResponse.storagePath());

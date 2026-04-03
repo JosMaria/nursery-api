@@ -1,5 +1,6 @@
 package com.lievasoft.repository;
 
+import com.lievasoft.dto.plant.PlantTaxonomy;
 import com.lievasoft.dto.response.PlantCardResponse;
 import com.lievasoft.dto.response.PlantDetailsResponse;
 import com.lievasoft.entity.Plant;
@@ -12,8 +13,7 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.lievasoft.plant.PlantConstant.FETCH_PLANT_CARDS_NAME;
-import static com.lievasoft.plant.PlantConstant.FETCH_PLANT_DETAILS_NAME;
+import static com.lievasoft.plant.PlantConstant.*;
 
 @ApplicationScoped
 public class PlantRepository implements PanacheRepository<Plant> {
@@ -25,7 +25,7 @@ public class PlantRepository implements PanacheRepository<Plant> {
 
     public List<PlantCardResponse> fetchPlantCards() {
         return getEntityManager()
-                .createNamedQuery(FETCH_PLANT_CARDS_NAME, PlantCardResponse.class)
+                .createNamedQuery(FETCH_PLANT_CARDS, PlantCardResponse.class)
                 .getResultList();
     }
 
@@ -33,26 +33,18 @@ public class PlantRepository implements PanacheRepository<Plant> {
         return this.findByIdOptional(plantId).orElseThrow(() -> new PlantNotFoundException(plantId));
     }
 
-//    public Plant findById(Long id) {
-//        find("SELECT p FROM Plant p WHERE ")
-//    }
+    public PlantTaxonomy fetchPlantTaxonomyById(Long plantId) {
+        var plantTaxonomy = getEntityManager()
+                .createNamedQuery(FETCH_PLANT_TAXONOMY, PlantTaxonomy.class)
+                .setParameter("id", plantId)
+                .getSingleResult();
+
+        return Optional.ofNullable(plantTaxonomy)
+                .orElseThrow(() -> new PlantNotFoundException(plantId));
+    }
 
     @Transactional
     public void remove(Plant plant) {
         delete(plant);
-    }
-
-    public Optional<PlantDetailsResponse> fetchPlantDetailsById(Long plantId) {
-        try {
-            var plantDetailsResponse = getEntityManager()
-                    .createNamedQuery(FETCH_PLANT_DETAILS_NAME, PlantDetailsResponse.class)
-                    .setParameter("id", plantId)
-                    .getSingleResult();
-
-            return Optional.ofNullable(plantDetailsResponse);
-
-        } catch (NoResultException e) {
-            return Optional.empty();
-        }
     }
 }

@@ -1,10 +1,31 @@
 package com.lievasoft.entity;
 
 import com.lievasoft.dto.plant.CommonNameCreateDTO;
+import com.lievasoft.dto.plant.CommonNameToPlantDetails;
 import jakarta.persistence.*;
+
+import static com.lievasoft.plant.PlantConstant.FETCH_COMMON_NAME_TO_PLANT_DETAILS;
+import static com.lievasoft.plant.PlantConstant.FETCH_COMMON_NAME_TO_PLANT_DETAILS_QUERY;
 
 @Entity
 @Table(name = "common_names")
+@NamedNativeQuery(
+        name = FETCH_COMMON_NAME_TO_PLANT_DETAILS,
+        query = FETCH_COMMON_NAME_TO_PLANT_DETAILS_QUERY,
+        resultSetMapping = "CommonNameToPlantDetailsMapping"
+)
+@SqlResultSetMapping(
+        name = "CommonNameToPlantDetailsMapping",
+        classes = @ConstructorResult(
+                targetClass = CommonNameToPlantDetails.class,
+                columns = {
+                        @ColumnResult(name = "id", type = Long.class),
+                        @ColumnResult(name = "name", type = String.class),
+                        @ColumnResult(name = "country", type = String.class),
+                        @ColumnResult(name = "place", type = String.class)
+                }
+        )
+)
 public class CommonName {
 
     @Id

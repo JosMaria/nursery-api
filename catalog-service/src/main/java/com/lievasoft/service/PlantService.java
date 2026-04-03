@@ -1,5 +1,6 @@
 package com.lievasoft.service;
 
+import com.lievasoft.dto.plant.ImageToPlantDetailsDTO;
 import com.lievasoft.dto.plant.PlantCreateDTO;
 import com.lievasoft.dto.plant.PlantCreateResponse;
 import com.lievasoft.dto.plant.PlantResponse;
@@ -9,6 +10,8 @@ import com.lievasoft.entity.CommonName;
 import com.lievasoft.entity.Plant;
 import com.lievasoft.entity.Taxonomy;
 import com.lievasoft.exception.PlantNotFoundException;
+import com.lievasoft.repository.CommonNameRepository;
+import com.lievasoft.repository.ImageRepository;
 import com.lievasoft.repository.PlantRepository;
 import com.lievasoft.service.cache.PlantCardKeyGenerator;
 import io.quarkus.cache.CacheInvalidate;
@@ -19,10 +22,9 @@ import io.quarkus.redis.datasource.keys.KeyCommands;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.jboss.logging.Logger;
 
-import java.time.Duration;
+import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.lievasoft.service.cache.PlantCardKeyGenerator.PLANT_CARDS_LIST_CACHE;
@@ -35,11 +37,17 @@ public class PlantService {
     private final HashCommands<String, String, String> hashCommands;
     private final KeyCommands<String> keyCommands;
     private final PlantRepository plantRepository;
+    private final CommonNameRepository commonNameRepository;
+    private final ImageRepository imageRepository;
 
-    public PlantService(RedisDataSource redisDataSource, PlantRepository plantRepository) {
+    public PlantService(RedisDataSource redisDataSource,
+                        PlantRepository plantRepository,
+                        CommonNameRepository commonNameRepository, ImageRepository imageRepository) {
         this.hashCommands = redisDataSource.hash(String.class);
         this.keyCommands = redisDataSource.key();
         this.plantRepository = plantRepository;
+        this.commonNameRepository = commonNameRepository;
+        this.imageRepository = imageRepository;
     }
 
     @CacheInvalidate(cacheName = PLANT_CARDS_LIST_CACHE, keyGenerator = PlantCardKeyGenerator.class)
@@ -62,11 +70,38 @@ public class PlantService {
         );
     }
 
-    @CacheResult(cacheName = "plant-cards-list")
+    @CacheResult(cacheName = PLANT_CARDS_LIST_CACHE, keyGenerator = PlantCardKeyGenerator.class)
     public List<PlantCardResponse> obtainPlantCards() {
         LOG.info("Obtaining plant cards from database");
         return plantRepository.fetchPlantCards();
     }
+
+    public PlantDetailsResponse obtainPlantDetailsById(Long plantId) {
+        var plantTaxonomy = plantRepository.fetchPlantTaxonomyById(plantId);
+        var commonNamesToPlantDetails = commonNameRepository.fetchCommonNameToPlantDetails(plantId);
+        var imagesToPlantDetailsDTO = imageRepository.fetchImageUrlsByPlantId(plantId);
+        Function<ImageToPlantDetailsDTO, String> buildPath = imageToPlantDetailsDTO ->
+                Paths.get(imageToPlantDetailsDTO.storagePath(), imageToPlantDetailsDTO.filename()).toString();
+        List<String> urls = imagesToPlantDetailsDTO.stream()
+                .map(buildPath)
+                .toList();
+        return new PlantDetailsResponse(plantTaxonomy, urls, commonNamesToPlantDetails);
+//        var key = "plant:details:%s".formatted(plantId);
+//        Map<String, String> redisPlantHash = hashCommands.hgetall(key);
+//
+//        if (Objects.isNull(redisPlantHash) || redisPlantHash.isEmpty()) {
+//
+//            saveToRedisCache(key, plantDetailsResponse);
+//            return null;
+//
+//        } else return new PlantDetailsResponse(redisPlantHash);
+    }
+
+//    private void saveToRedisCache(String key, PlantDetailsResponse plantDetails) {
+//        Map<String, String> hashToPersist = plantDetails.mapToRedisHash();
+//        this.hashCommands.hset(key, hashToPersist);
+//        this.keyCommands.expire(key, Duration.ofMinutes(1));
+//    }
 
     public PlantCreateResponse createCommonNames() {
         return null;
@@ -77,26 +112,5 @@ public class PlantService {
                 .orElseThrow(() -> new PlantNotFoundException(plantId));
         plantRepository.remove(obtainedPlant);
         return new PlantResponse(obtainedPlant);
-    }
-
-    public PlantDetailsResponse fetchPlantDetailsById(Long plantId) {
-        var key = "plant:details:%s".formatted(plantId);
-        Map<String, String> redisPlantHash = hashCommands.hgetall(key);
-
-        if (!(Objects.isNull(redisPlantHash) || redisPlantHash.isEmpty()))
-            return new PlantDetailsResponse(redisPlantHash);
-
-        else {
-            var plantDetailsResponse = plantRepository.fetchPlantDetailsById(plantId)
-                    .orElseThrow(() -> new PlantNotFoundException(plantId));
-            saveToRedisCache(key, plantDetailsResponse);
-            return plantDetailsResponse;
-        }
-    }
-
-    private void saveToRedisCache(String key, PlantDetailsResponse plantDetails) {
-        Map<String, String> hashToPersist = plantDetails.mapToRedisHash();
-        this.hashCommands.hset(key, hashToPersist);
-        this.keyCommands.expire(key, Duration.ofMinutes(1));
     }
 }

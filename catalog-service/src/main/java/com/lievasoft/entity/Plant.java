@@ -1,6 +1,7 @@
 package com.lievasoft.entity;
 
 import com.lievasoft.dto.plant.PlantCreateDTO;
+import com.lievasoft.dto.plant.PlantTaxonomy;
 import com.lievasoft.dto.response.PlantCardResponse;
 import jakarta.persistence.*;
 
@@ -9,17 +10,21 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.lievasoft.plant.PlantConstant.FETCH_PLANT_CARDS_NAME;
-import static com.lievasoft.plant.PlantConstant.FETCH_PLANT_CARDS_QUERY;
+import static com.lievasoft.plant.PlantConstant.*;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity
 @Table(name = "plants")
 @NamedNativeQueries({
         @NamedNativeQuery(
-                name = FETCH_PLANT_CARDS_NAME,
+                name = FETCH_PLANT_CARDS,
                 query = FETCH_PLANT_CARDS_QUERY,
                 resultSetMapping = "PlantCardsMapping"
+        ),
+        @NamedNativeQuery(
+                name = FETCH_PLANT_TAXONOMY,
+                query = FETCH_PLANT_TAXONOMY_QUERY,
+                resultSetMapping = "PlantTaxonomyMapping"
         )
 })
 @SqlResultSetMappings({
@@ -34,6 +39,24 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
                                 @ColumnResult(name = "price", type = BigDecimal.class),
                                 @ColumnResult(name = "storage_path", type = String.class),
                                 @ColumnResult(name = "filename", type = String.class)
+                        }
+                )
+        ),
+        @SqlResultSetMapping(
+                name = "PlantTaxonomyMapping",
+                classes = @ConstructorResult(
+                        targetClass = PlantTaxonomy.class,
+                        columns = {
+                                @ColumnResult(name = "id", type = Long.class),
+                                @ColumnResult(name = "scientific_name", type = String.class),
+                                @ColumnResult(name = "price", type = BigDecimal.class),
+                                @ColumnResult(name = "updated_at", type = LocalDateTime.class),
+                                @ColumnResult(name = "division", type = String.class),
+                                @ColumnResult(name = "class", type = String.class),
+                                @ColumnResult(name = "taxonomic_order", type = String.class),
+                                @ColumnResult(name = "family", type = String.class),
+                                @ColumnResult(name = "genus", type = String.class),
+                                @ColumnResult(name = "species", type = String.class)
                         }
                 )
         )
