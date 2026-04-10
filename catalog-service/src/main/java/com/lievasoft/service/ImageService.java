@@ -48,4 +48,11 @@ public class ImageService {
                 imageCardResponse.filename(), imageCardResponse.storagePath());
         return new DownloadImageResponse(imageBytes, imageCardResponse.contentType());
     }
+
+    public DownloadImageResponse obtainImagePlantBy(Long plantId, String filename) {
+        var obtainedImage = imageRepository.findImagePlantBy(plantId, filename);
+        LOG.infof("Downloading image for plant with id: %s", plantId);
+        byte[] imageBytes = imageStorageService.downloadImageFromFileSystem(filename, obtainedImage.getStoragePath());
+        return new DownloadImageResponse(imageBytes, obtainedImage.getContentType());
+    }
 }

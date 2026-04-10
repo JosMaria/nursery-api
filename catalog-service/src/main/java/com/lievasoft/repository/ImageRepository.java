@@ -8,6 +8,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityNotFoundException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.lievasoft.plant.PlantConstant.FETCH_IMAGE_PLANT_CARD;
@@ -31,5 +32,12 @@ public class ImageRepository implements PanacheRepository<Image> {
                 .createNamedQuery(FETCH_IMAGE_PLANT_CARDS, ImageToPlantDetailsDTO.class)
                 .setParameter("id", plantId)
                 .getResultList();
+    }
+
+    public Image findImagePlantBy(Long plantId, String filename) {
+        Map<String, Object> params = Map.of("plantId", plantId, "filename", filename);
+        return find("plant.id = :plantId AND filename = :filename", params)
+                .firstResultOptional()
+                .orElseThrow(() -> new EntityNotFoundException("Image with not found"));
     }
 }

@@ -8,6 +8,7 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Response;
 import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.RestPath;
+import org.jboss.resteasy.reactive.RestQuery;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 import java.net.URI;
@@ -33,9 +34,18 @@ public class ImageResource {
     }
 
     @GET
-    @Path("/{id}/images")
+    @Path("/{id}/images/card")
     public Response fetchImagePlantCard(@RestPath("id") Long plantId) {
         var downloadImageResponse = imageService.obtainImageToPlantCardBy(plantId);
+        return Response.ok(downloadImageResponse.imageBytes())
+                .header("Content-Type", downloadImageResponse.contentType())
+                .build();
+    }
+
+    @GET
+    @Path("/{id}/images")
+    public Response fetchImagePlant(@RestPath("id") Long plantId, @RestQuery("image_name") String filename) {
+        var downloadImageResponse = imageService.obtainImagePlantBy(plantId, filename);
         return Response.ok(downloadImageResponse.imageBytes())
                 .header("Content-Type", downloadImageResponse.contentType())
                 .build();

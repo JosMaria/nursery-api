@@ -41,7 +41,7 @@ public class PlantResource {
     }
 
     @GET
-    @Path("/details/{id}")
+    @Path("/{id}/details")
     public Response fetchPlantDetailsById(@RestPath("id") Long plantId) {
         var plantDetailsResponse = plantService.obtainPlantDetailsById(plantId);
         return Response.ok(plantDetailsResponse).build();
