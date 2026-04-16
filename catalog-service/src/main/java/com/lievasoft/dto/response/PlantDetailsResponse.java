@@ -2,6 +2,7 @@ package com.lievasoft.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lievasoft.dto.plant.CommonNameToPlantDetails;
+import com.lievasoft.dto.plant.ImageToPlantDetailsDTO;
 import com.lievasoft.dto.plant.PlantTaxonomy;
 
 import java.math.BigDecimal;
@@ -16,13 +17,14 @@ public record PlantDetailsResponse(
         @JsonProperty("updated_at")
         LocalDateTime updatedAt,
         TaxonomyResponse taxonomy,
-        List<String> urls,
+        @JsonProperty("images_info")
+        List<ImageToPlantDetailsDTO> imagesToPlantDetailsDTO,
         @JsonProperty("common_names")
         List<CommonNameToPlantDetails> commonNames
 ) {
 
     public PlantDetailsResponse(PlantTaxonomy plantTaxonomy,
-                                List<String> urls,
+                                List<ImageToPlantDetailsDTO> imagesToPlantDetailsDTO,
                                 List<CommonNameToPlantDetails> commonNames) {
         this(
                 plantTaxonomy.id(),
@@ -37,7 +39,7 @@ public record PlantDetailsResponse(
                         plantTaxonomy.genus(),
                         plantTaxonomy.species()
                 ),
-                urls,
+                imagesToPlantDetailsDTO,
                 commonNames
         );
     }

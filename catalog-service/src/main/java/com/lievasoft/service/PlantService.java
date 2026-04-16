@@ -80,12 +80,7 @@ public class PlantService {
         var plantTaxonomy = plantRepository.fetchPlantTaxonomyById(plantId);
         var commonNamesToPlantDetails = commonNameRepository.fetchCommonNameToPlantDetails(plantId);
         var imagesToPlantDetailsDTO = imageRepository.fetchImageUrlsByPlantId(plantId);
-        Function<ImageToPlantDetailsDTO, String> buildPath = imageToPlantDetailsDTO ->
-                Paths.get(imageToPlantDetailsDTO.storagePath(), imageToPlantDetailsDTO.filename()).toString();
-        List<String> urls = imagesToPlantDetailsDTO.stream()
-                .map(buildPath)
-                .toList();
-        return new PlantDetailsResponse(plantTaxonomy, urls, commonNamesToPlantDetails);
+        return new PlantDetailsResponse(plantTaxonomy, imagesToPlantDetailsDTO, commonNamesToPlantDetails);
 //        var key = "plant:details:%s".formatted(plantId);
 //        Map<String, String> redisPlantHash = hashCommands.hgetall(key);
 //

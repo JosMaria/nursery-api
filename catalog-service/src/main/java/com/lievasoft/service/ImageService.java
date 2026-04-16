@@ -20,7 +20,9 @@ public class ImageService {
     private final PlantRepository plantRepository;
     private final ImageRepository imageRepository;
 
-    public ImageService(ImageStorageService imageStorageService, PlantRepository plantRepository, ImageRepository imageRepository) {
+    public ImageService(ImageStorageService imageStorageService,
+                        PlantRepository plantRepository,
+                        ImageRepository imageRepository) {
         this.imageStorageService = imageStorageService;
         this.plantRepository = plantRepository;
         this.imageRepository = imageRepository;
