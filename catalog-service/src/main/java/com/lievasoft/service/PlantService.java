@@ -22,7 +22,7 @@ import org.jboss.logging.Logger;
 
 import java.util.stream.Collectors;
 
-import static com.lievasoft.service.cache.PlantCardKeyGenerator.PLANT_CARDS_LIST_CACHE;
+import static com.lievasoft.service.cache.PlantCardKeyGenerator.*;
 
 @ApplicationScoped
 public class PlantService {
@@ -45,7 +45,7 @@ public class PlantService {
         this.imageRepository = imageRepository;
     }
 
-    @CacheInvalidate(cacheName = PLANT_CARDS_LIST_CACHE, keyGenerator = PlantCardKeyGenerator.class)
+    @CacheInvalidate(cacheName = PLANT_CARDS_CACHE, keyGenerator = PlantCardKeyGenerator.class)
     public PlantCreateResponse create(PlantCreateDTO plantCreateDTO) {
         var plantToPersist = new Plant(plantCreateDTO);
         var taxonomyToPersist = new Taxonomy(plantCreateDTO.taxonomyDTO());
@@ -66,9 +66,7 @@ public class PlantService {
     }
 
     public PaginatedResult<PlantCardResponse> obtainPlantCards(int numberPage, int sizePage) {
-        var defaultNumberPage = 0;
-        var defaultSizePage = 8;
-        if (numberPage == defaultNumberPage && sizePage == defaultSizePage)
+        if (numberPage == CACHED_NUMBER_PAGE && sizePage == CACHED_SIZE_PAGE)
             return obtainCachedPlantCards(numberPage, sizePage);
         else {
             LOG.infof("Obtaining plant cards from database (page=%s, size=%s)", numberPage, sizePage);
@@ -76,7 +74,7 @@ public class PlantService {
         }
     }
 
-    @CacheResult(cacheName = PLANT_CARDS_LIST_CACHE)
+    @CacheResult(cacheName = PLANT_CARDS_CACHE, keyGenerator = PlantCardKeyGenerator.class)
     PaginatedResult<PlantCardResponse> obtainCachedPlantCards(int numberPage, int sizePage) {
         LOG.infof("Caching default plant cards (page=0, size=8)");
         return plantRepository.fetchPaginatedPlantCards(numberPage, sizePage);
