@@ -15,6 +15,8 @@ public class PlantConstant {
                         FROM common_names
                         WHERE is_selected = TRUE
                     ) AS cn ON cn.plant_id = p.id
+                    LIMIT :limit
+                    OFFSET :offset
             """;
 
     public static final String FETCH_IMAGE_PLANT_CARD = "Image.fetchImageCard";

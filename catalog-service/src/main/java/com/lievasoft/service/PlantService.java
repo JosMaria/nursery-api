@@ -1,5 +1,6 @@
 package com.lievasoft.service;
 
+import com.lievasoft.dto.plant.PaginatedResult;
 import com.lievasoft.dto.plant.PlantCreateDTO;
 import com.lievasoft.dto.plant.PlantCreateResponse;
 import com.lievasoft.dto.response.PlantCardResponse;
@@ -19,7 +20,6 @@ import io.quarkus.redis.datasource.keys.KeyCommands;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.jboss.logging.Logger;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.lievasoft.service.cache.PlantCardKeyGenerator.PLANT_CARDS_LIST_CACHE;
@@ -65,10 +65,21 @@ public class PlantService {
         );
     }
 
-    @CacheResult(cacheName = PLANT_CARDS_LIST_CACHE, keyGenerator = PlantCardKeyGenerator.class)
-    public List<PlantCardResponse> obtainPlantCards() {
-        LOG.info("Obtaining plant cards from database");
-        return plantRepository.fetchPlantCards();
+    public PaginatedResult<PlantCardResponse> obtainPlantCards(int numberPage, int sizePage) {
+        var defaultNumberPage = 0;
+        var defaultSizePage = 8;
+        if (numberPage == defaultNumberPage && sizePage == defaultSizePage)
+            return obtainCachedPlantCards(numberPage, sizePage);
+        else {
+            LOG.infof("Obtaining plant cards from database (page=%s, size=%s)", numberPage, sizePage);
+            return plantRepository.fetchPaginatedPlantCards(numberPage, sizePage);
+        }
+    }
+
+    @CacheResult(cacheName = PLANT_CARDS_LIST_CACHE)
+    PaginatedResult<PlantCardResponse> obtainCachedPlantCards(int numberPage, int sizePage) {
+        LOG.infof("Caching default plant cards (page=0, size=8)");
+        return plantRepository.fetchPaginatedPlantCards(numberPage, sizePage);
     }
 
     public PlantDetailsResponse obtainPlantDetailsById(Long plantId) {

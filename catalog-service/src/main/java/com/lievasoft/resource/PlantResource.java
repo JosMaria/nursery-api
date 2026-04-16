@@ -3,11 +3,13 @@ package com.lievasoft.resource;
 import com.lievasoft.dto.plant.PlantCreateDTO;
 import com.lievasoft.resource.validator.PlantValidator;
 import com.lievasoft.service.PlantService;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Response;
 import org.jboss.resteasy.reactive.RestPath;
+import org.jboss.resteasy.reactive.RestQuery;
 
 import java.net.URI;
 
@@ -32,8 +34,9 @@ public class PlantResource {
 
     @GET
     @Path("/cards")
-    public Response fetchPlantCards() {
-        var plantCardsResponse = plantService.obtainPlantCards();
+    public Response fetchPlantCards(@RestQuery("page") int numberPage,
+                                    @RestQuery("size") @DefaultValue("8") int sizePage) {
+        var plantCardsResponse = plantService.obtainPlantCards(numberPage, sizePage);
         return Response.ok(plantCardsResponse).build();
     }
 

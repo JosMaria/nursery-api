@@ -1,5 +1,6 @@
 package com.lievasoft.repository;
 
+import com.lievasoft.dto.plant.PaginatedResult;
 import com.lievasoft.dto.plant.PlantTaxonomy;
 import com.lievasoft.dto.response.PlantCardResponse;
 import com.lievasoft.entity.Plant;
@@ -22,10 +23,16 @@ public class PlantRepository implements PanacheRepository<Plant> {
         persist(plant);
     }
 
-    public List<PlantCardResponse> fetchPlantCards() {
-        return getEntityManager()
+    public PaginatedResult<PlantCardResponse> fetchPaginatedPlantCards(int numberPage, int size) {
+        long totalOfPlants = count();
+        List<PlantCardResponse> plantCards = getEntityManager()
                 .createNamedQuery(FETCH_PLANT_CARDS, PlantCardResponse.class)
+                .setParameter("limit", size)
+                .setParameter("offset", size * numberPage)
                 .getResultList();
+
+        int totalPages = (int) Math.ceil((double) totalOfPlants / size);
+        return new PaginatedResult<>(plantCards, numberPage, size, count(), totalPages);
     }
 
     public Plant obtainByIdOrThrowException(Long plantId) {
