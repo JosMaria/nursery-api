@@ -2,18 +2,17 @@ package com.lievasoft.repository;
 
 import com.lievasoft.dto.plant.PlantTaxonomy;
 import com.lievasoft.dto.response.PlantCardResponse;
-import com.lievasoft.dto.response.PlantDetailsResponse;
 import com.lievasoft.entity.Plant;
 import com.lievasoft.exception.PlantNotFoundException;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.persistence.NoResultException;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
-import static com.lievasoft.plant.PlantConstant.*;
+import static com.lievasoft.plant.PlantConstant.FETCH_PLANT_CARDS;
+import static com.lievasoft.plant.PlantConstant.FETCH_PLANT_TAXONOMY;
 
 @ApplicationScoped
 public class PlantRepository implements PanacheRepository<Plant> {
@@ -41,10 +40,5 @@ public class PlantRepository implements PanacheRepository<Plant> {
 
         return Optional.ofNullable(plantTaxonomy)
                 .orElseThrow(() -> new PlantNotFoundException(plantId));
-    }
-
-    @Transactional
-    public void remove(Plant plant) {
-        delete(plant);
     }
 }

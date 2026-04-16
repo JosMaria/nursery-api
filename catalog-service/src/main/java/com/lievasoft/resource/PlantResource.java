@@ -1,10 +1,8 @@
 package com.lievasoft.resource;
 
-import com.lievasoft.dto.plant.CommonNameCreateDTO;
 import com.lievasoft.dto.plant.PlantCreateDTO;
 import com.lievasoft.resource.validator.PlantValidator;
 import com.lievasoft.service.PlantService;
-import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -12,7 +10,6 @@ import jakarta.ws.rs.core.Response;
 import org.jboss.resteasy.reactive.RestPath;
 
 import java.net.URI;
-import java.util.Collection;
 
 @Path("/api/v1/plants")
 public class PlantResource {
@@ -45,19 +42,5 @@ public class PlantResource {
     public Response fetchPlantDetailsById(@RestPath("id") Long plantId) {
         var plantDetailsResponse = plantService.obtainPlantDetailsById(plantId);
         return Response.ok(plantDetailsResponse).build();
-    }
-
-    @POST
-    @Path("common-names")
-    public Response createCommonNames(Collection<CommonNameCreateDTO> commonNameCreateDTO) {
-        plantValidator.validateCommonNamesDTO(commonNameCreateDTO);
-        return Response.ok().build();
-    }
-
-    @DELETE
-    @Path("/{id}")
-    public Response delete(@RestPath("id") Long plantId) {
-        var plantResponse = plantService.removeById(plantId);
-        return Response.ok(plantResponse).build();
     }
 }

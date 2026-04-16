@@ -1,15 +1,12 @@
 package com.lievasoft.service;
 
-import com.lievasoft.dto.plant.ImageToPlantDetailsDTO;
 import com.lievasoft.dto.plant.PlantCreateDTO;
 import com.lievasoft.dto.plant.PlantCreateResponse;
-import com.lievasoft.dto.plant.PlantResponse;
 import com.lievasoft.dto.response.PlantCardResponse;
 import com.lievasoft.dto.response.PlantDetailsResponse;
 import com.lievasoft.entity.CommonName;
 import com.lievasoft.entity.Plant;
 import com.lievasoft.entity.Taxonomy;
-import com.lievasoft.exception.PlantNotFoundException;
 import com.lievasoft.repository.CommonNameRepository;
 import com.lievasoft.repository.ImageRepository;
 import com.lievasoft.repository.PlantRepository;
@@ -22,9 +19,7 @@ import io.quarkus.redis.datasource.keys.KeyCommands;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.jboss.logging.Logger;
 
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.lievasoft.service.cache.PlantCardKeyGenerator.PLANT_CARDS_LIST_CACHE;
@@ -97,15 +92,4 @@ public class PlantService {
 //        this.hashCommands.hset(key, hashToPersist);
 //        this.keyCommands.expire(key, Duration.ofMinutes(1));
 //    }
-
-    public PlantCreateResponse createCommonNames() {
-        return null;
-    }
-
-    public PlantResponse removeById(Long plantId) {
-        var obtainedPlant = plantRepository.findByIdOptional(plantId)
-                .orElseThrow(() -> new PlantNotFoundException(plantId));
-        plantRepository.remove(obtainedPlant);
-        return new PlantResponse(obtainedPlant);
-    }
 }
