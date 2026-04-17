@@ -9,6 +9,8 @@ public record PlantCardResponse(
         long plantId,
         @JsonProperty("scientific_name")
         String scientificName,
+        @JsonProperty("is_favorite")
+        boolean isFavorite,
         @JsonProperty("common_name")
         String commonName,
         BigDecimal price,

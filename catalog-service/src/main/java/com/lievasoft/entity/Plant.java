@@ -35,6 +35,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
                         columns = {
                                 @ColumnResult(name = "id", type = Long.class),
                                 @ColumnResult(name = "scientific_name", type = String.class),
+                                @ColumnResult(name = "is_favorite", type = Boolean.class),
                                 @ColumnResult(name = "common_name", type = String.class),
                                 @ColumnResult(name = "price", type = BigDecimal.class),
                                 @ColumnResult(name = "storage_path", type = String.class),
@@ -84,6 +85,9 @@ public class Plant {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
+    @Column(name = "is_favorite")
+    private Boolean isFavorite;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -113,6 +117,10 @@ public class Plant {
 
     public BigDecimal getPrice() {
         return this.price;
+    }
+
+    public void setIsFavorite(boolean isFavorite) {
+        this.isFavorite = isFavorite;
     }
 
     public LocalDateTime getCreatedAt() {

@@ -3,10 +3,7 @@ package com.lievasoft.resource;
 import com.lievasoft.dto.plant.PlantCreateDTO;
 import com.lievasoft.resource.validator.PlantValidator;
 import com.lievasoft.service.PlantService;
-import jakarta.ws.rs.DefaultValue;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import org.jboss.resteasy.reactive.RestPath;
 import org.jboss.resteasy.reactive.RestQuery;
@@ -45,5 +42,12 @@ public class PlantResource {
     public Response fetchPlantDetailsById(@RestPath("id") Long plantId) {
         var plantDetailsResponse = plantService.obtainPlantDetailsById(plantId);
         return Response.ok(plantDetailsResponse).build();
+    }
+
+    @PATCH
+    @Path("/{id}/favorite")
+    public Response updateIsFavorite(@RestPath("id") Long plantId, @RestQuery("favorite") boolean isFavorite) {
+        boolean isChanged = plantService.changeIsFavorite(plantId, isFavorite);
+        return Response.ok(isChanged).build();
     }
 }

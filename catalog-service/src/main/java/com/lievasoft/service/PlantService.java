@@ -101,4 +101,21 @@ public class PlantService {
 //        this.hashCommands.hset(key, hashToPersist);
 //        this.keyCommands.expire(key, Duration.ofMinutes(1));
 //    }
+
+    public boolean changeIsFavorite(long plantId, boolean isFavorite) {
+        if (canChangeIsFavorite(isFavorite)) {
+            int countModified = plantRepository.updateIsFavorite(plantId, isFavorite);
+            return countModified == 1;
+
+        } else return false;
+    }
+
+    private boolean canChangeIsFavorite(boolean isFavorite) {
+        final int numberMaxOfFavorites = 4;
+        if (isFavorite) {
+            int countFavorites = plantRepository.countOfFavorites();
+            return countFavorites < numberMaxOfFavorites;
+
+        } else return true;
+    }
 }

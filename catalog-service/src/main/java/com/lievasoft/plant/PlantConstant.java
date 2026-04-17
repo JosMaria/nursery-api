@@ -4,7 +4,7 @@ public class PlantConstant {
 
     public static final String FETCH_PLANT_CARDS = "Plant.fetchPlantCards";
     public static final String FETCH_PLANT_CARDS_QUERY = """
-                    SELECT p.id, p.scientific_name, cn.name AS common_name, p.price, i.storage_path, i.filename
+                    SELECT p.id, p.scientific_name, p.is_favorite, cn.name AS common_name, p.price, i.storage_path, i.filename
                     FROM plants p
                     LEFT JOIN (
                         SELECT DISTINCT ON (plant_id) plant_id, storage_path, filename
@@ -15,6 +15,7 @@ public class PlantConstant {
                         FROM common_names
                         WHERE is_selected = TRUE
                     ) AS cn ON cn.plant_id = p.id
+                    ORDER BY p.is_favorite DESC
                     LIMIT :limit
                     OFFSET :offset
             """;

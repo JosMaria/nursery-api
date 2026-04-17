@@ -10,6 +10,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.lievasoft.plant.PlantConstant.FETCH_PLANT_CARDS;
@@ -47,5 +48,15 @@ public class PlantRepository implements PanacheRepository<Plant> {
 
         return Optional.ofNullable(plantTaxonomy)
                 .orElseThrow(() -> new PlantNotFoundException(plantId));
+    }
+
+    public int countOfFavorites() {
+        return (int) count("isFavorite = TRUE");
+    }
+
+    @Transactional
+    public int updateIsFavorite(Long plantId, boolean isFavorite) {
+        Map<String, Object> params = Map.of("isFavorite", isFavorite, "id", plantId);
+        return update("isFavorite = :isFavorite WHERE id = :id", params);
     }
 }
