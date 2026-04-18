@@ -29,14 +29,24 @@ public class ImageService {
     }
 
     @Transactional
-    public PlantImageResponse persist(Long plantId, FileUpload imageUpload) {
+    public PlantImageResponse persist(long plantId, boolean isSelected, FileUpload imageUpload) {
         var persistedPlant = plantRepository.obtainByIdOrThrowException(plantId);
         var uploadImageResponse = imageStorageService.uploadImageToFileSystem(plantId, imageUpload);
+
+        if (isSelected) {
+            boolean existImages = imageRepository.existsByPlant(plantId);
+            if (existImages) {
+                int rowsAffected = imageRepository.updateIsSelectedToFalseByPlant(plantId);
+                LOG.infof("%s images affected given plant id %s", rowsAffected, plantId);
+            }
+        }
+
         var imageToPersist = new Image(
                 uploadImageResponse.storagePath(),
                 uploadImageResponse.filename(),
                 imageUpload.size(),
-                imageUpload.contentType()
+                imageUpload.contentType(),
+                isSelected
         );
 
         persistedPlant.addImage(imageToPersist);

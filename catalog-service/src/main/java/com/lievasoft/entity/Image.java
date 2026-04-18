@@ -34,14 +34,14 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
                 )
         ),
         @SqlResultSetMapping(
-            name = "ImageCardToPlantDetails",
-            classes = @ConstructorResult(
-                    targetClass = ImageToPlantDetailsDTO.class,
-                    columns = {
-                            @ColumnResult(name = "filename", type = String.class),
-                            @ColumnResult(name = "storage_path", type = String.class)
-                    }
-            )
+                name = "ImageCardToPlantDetails",
+                classes = @ConstructorResult(
+                        targetClass = ImageToPlantDetailsDTO.class,
+                        columns = {
+                                @ColumnResult(name = "filename", type = String.class),
+                                @ColumnResult(name = "storage_path", type = String.class)
+                        }
+                )
         )
 })
 public class Image {
@@ -62,6 +62,9 @@ public class Image {
     @Column(name = "content_type", length = 20)
     private String contentType;
 
+    @Column(name = "is_selected")
+    private Boolean isSelected;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plant_id", nullable = false)
     private Plant plant;
@@ -69,11 +72,12 @@ public class Image {
     public Image() {
     }
 
-    public Image(String storagePath, String filename, long fileSize, String contentType) {
+    public Image(String storagePath, String filename, long fileSize, String contentType, boolean isSelected) {
         this.storagePath = storagePath;
         this.filename = filename;
         this.fileSize = fileSize;
         this.contentType = contentType;
+        this.isSelected = isSelected;
     }
 
     public Long getId() {

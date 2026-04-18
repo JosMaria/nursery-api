@@ -35,8 +35,6 @@ public class PlantConstant {
                 WHERE plant_id = :id
             """;
 
-
-
     public static final String FETCH_PLANT_TAXONOMY = "Plant.fetchPlantTaxonomy";
     public static final String FETCH_PLANT_TAXONOMY_QUERY = """
                 SELECT p.id, p.scientific_name, p.price, p.updated_at,
@@ -53,6 +51,4 @@ public class PlantConstant {
                 FROM common_names cn
                 WHERE cn.plant_id = :id
             """;
-
-    public static final String FETCH_PLANT_DETAILS_NAME = "Plant.fetchPlantDetailsById";
 }

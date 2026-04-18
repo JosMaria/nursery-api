@@ -26,9 +26,11 @@ public class ImageResource {
 
     @POST
     @Path("/{id}/images")
-    public Response save(@RestPath("id") Long plantId, @RestForm("file") FileUpload imageUpload) {
+    public Response save(@RestPath("id") Long plantId,
+                         @RestQuery("selected") boolean isSelected,
+                         @RestForm("file") FileUpload imageUpload) {
         imageValidator.validate(imageUpload);
-        var plantImageResponse = imageService.persist(plantId, imageUpload);
+        var plantImageResponse = imageService.persist(plantId, isSelected, imageUpload);
         URI location = URI.create("/api/v1/plants/%s/images".formatted(plantId));
         return Response.created(location).entity(plantImageResponse).build();
     }

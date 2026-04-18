@@ -6,6 +6,7 @@ import com.lievasoft.entity.Image;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -39,5 +40,25 @@ public class ImageRepository implements PanacheRepository<Image> {
         return find("plant.id = :plantId AND filename = :filename", params)
                 .firstResultOptional()
                 .orElseThrow(() -> new EntityNotFoundException("Image with not found"));
+    }
+
+    public boolean existsByPlant(long plantId) {
+        var query = """
+                SELECT EXISTS (
+                    SELECT TRUE
+                    FROM images
+                    WHERE plant_id = :plantId)
+                """;
+
+        return (boolean) getEntityManager()
+                .createNativeQuery(query, Boolean.class)
+                .setParameter("plantId", plantId)
+                .getSingleResult();
+    }
+
+    @Transactional
+    public int updateIsSelectedToFalseByPlant(long plantId) {
+        Map<String, Object> params = Map.of("plantId", plantId);
+        return update("isSelected = FALSE WHERE plant.id = :plantId", params);
     }
 }
