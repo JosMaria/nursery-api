@@ -92,6 +92,10 @@ public class Image {
         return this.storagePath;
     }
 
+    public Boolean getSelected() {
+        return this.isSelected;
+    }
+
     public void setStoragePath(String storagePath) {
         this.storagePath = storagePath;
     }

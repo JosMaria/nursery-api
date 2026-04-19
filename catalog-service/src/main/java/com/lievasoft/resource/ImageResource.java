@@ -3,6 +3,7 @@ package com.lievasoft.resource;
 import com.lievasoft.resource.validator.ImageValidator;
 import com.lievasoft.service.ImageService;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PATCH;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.Response;
@@ -51,5 +52,12 @@ public class ImageResource {
         return Response.ok(downloadImageResponse.imageBytes())
                 .header("Content-Type", downloadImageResponse.contentType())
                 .build();
+    }
+
+    @PATCH
+    @Path("/{plantId}/images/{imageId}")
+    public Response updateIsSelected(@RestPath("plantId") long plantId, @RestPath("imageId") long imageId) {
+        boolean isChanged = imageService.setImageAsSelected(imageId, plantId);
+        return Response.ok(isChanged).build();
     }
 }

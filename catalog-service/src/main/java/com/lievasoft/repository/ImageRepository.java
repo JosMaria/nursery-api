@@ -7,6 +7,7 @@ import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.jboss.logging.Logger;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,18 @@ import static com.lievasoft.plant.PlantConstant.FETCH_IMAGE_PLANT_CARDS;
 
 @ApplicationScoped
 public class ImageRepository implements PanacheRepository<Image> {
+
+    private static final Logger LOG = Logger.getLogger(ImageRepository.class);
+
+    public Image obtainOrThrowException(long imageId, long plantId) {
+        Map<String, Object> params = Map.of("id", imageId, "plantId", plantId);
+        return find("id = :id AND plant.id = :plantId", params)
+                .firstResultOptional()
+                .orElseThrow(() -> {
+                    LOG.infof("Image with ID: %s and its plantId: %s not found", imageId, plantId);
+                    return new EntityNotFoundException();
+                });
+    }
 
     public ImageCardResponse fetchImagePlantCardOrThrowException(Long plantId) {
         var maybeImageCard = getEntityManager()
@@ -57,8 +70,9 @@ public class ImageRepository implements PanacheRepository<Image> {
     }
 
     @Transactional
-    public int updateIsSelectedToFalseByPlant(long plantId) {
-        Map<String, Object> params = Map.of("plantId", plantId);
-        return update("isSelected = FALSE WHERE plant.id = :plantId", params);
+    public int updateIsSelected(long imageId, long plantId) {
+        update("isSelected = FALSE WHERE plant.id = ?1 AND isSelected = TRUE", plantId);
+        Map<String, Object> params = Map.of("plantId", plantId, "id", imageId);
+        return update("isSelected = TRUE WHERE plant.id = :plantId AND id = :id", params);
     }
 }

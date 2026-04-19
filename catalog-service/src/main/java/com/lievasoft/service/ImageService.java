@@ -11,6 +11,8 @@ import jakarta.transaction.Transactional;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 
+import static io.quarkus.hibernate.orm.panache.PanacheEntityBase.update;
+
 @ApplicationScoped
 public class ImageService {
 
@@ -36,8 +38,8 @@ public class ImageService {
         if (isSelected) {
             boolean existImages = imageRepository.existsByPlant(plantId);
             if (existImages) {
-                int rowsAffected = imageRepository.updateIsSelectedToFalseByPlant(plantId);
-                LOG.infof("%s images affected given plant id %s", rowsAffected, plantId);
+                int rowsAffected = update("isSelected = FALSE WHERE plant.id = ?1", plantId);
+                LOG.infof("%s images affected given plantId %s", rowsAffected, plantId);
             }
         }
 
@@ -66,5 +68,16 @@ public class ImageService {
         LOG.infof("Downloading image for plant with id: %s", plantId);
         byte[] imageBytes = imageStorageService.downloadImageFromFileSystem(filename, obtainedImage.getStoragePath());
         return new DownloadImageResponse(imageBytes, obtainedImage.getContentType());
+    }
+
+    public boolean setImageAsSelected(long imageId, long plantId) {
+        var obtainedImage = imageRepository.obtainOrThrowException(imageId, plantId);
+        boolean isSelected = obtainedImage.getSelected() != null ?  obtainedImage.getSelected() : false;
+        if (!isSelected) {
+            int affectedRows = imageRepository.updateIsSelected(imageId, plantId);
+            LOG.infof("Image with id: %s and plantId: %s was update its property isSelected", imageId, plantId);
+            return affectedRows == 1;
+
+        } else return false;
     }
 }
