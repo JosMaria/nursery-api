@@ -2,6 +2,7 @@ package com.lievasoft.repository;
 
 import com.lievasoft.dto.plant.ImageToPlantDetailsDTO;
 import com.lievasoft.dto.response.ImageCardResponse;
+import com.lievasoft.dto.response.image.ImageSelectionResponse;
 import com.lievasoft.entity.Image;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -15,11 +16,19 @@ import java.util.Optional;
 
 import static com.lievasoft.plant.PlantConstant.FETCH_IMAGE_PLANT_CARD;
 import static com.lievasoft.plant.PlantConstant.FETCH_IMAGE_PLANT_CARDS;
+import static com.lievasoft.statement.ImageQuery.IMAGE_SELECTION_PER_PLANT;
 
 @ApplicationScoped
 public class ImageRepository implements PanacheRepository<Image> {
 
     private static final Logger LOG = Logger.getLogger(ImageRepository.class);
+
+    public List<ImageSelectionResponse> findImagesPerPlant(long plantId) {
+        return getEntityManager()
+                .createNamedQuery(IMAGE_SELECTION_PER_PLANT, ImageSelectionResponse.class)
+                .setParameter("plantId", plantId)
+                .getResultList();
+    }
 
     public Image obtainOrThrowException(long imageId, long plantId) {
         Map<String, Object> params = Map.of("id", imageId, "plantId", plantId);

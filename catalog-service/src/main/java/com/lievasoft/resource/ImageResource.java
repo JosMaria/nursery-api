@@ -1,6 +1,7 @@
 package com.lievasoft.resource;
 
 import com.lievasoft.resource.validator.ImageValidator;
+import com.lievasoft.service.DefaultImageService;
 import com.lievasoft.service.ImageService;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
@@ -18,10 +19,12 @@ import java.net.URI;
 public class ImageResource {
 
     private final ImageValidator imageValidator;
+    private final DefaultImageService defaultImageService;
     private final ImageService imageService;
 
-    public ImageResource(ImageValidator imageValidator, ImageService imageService) {
+    public ImageResource(ImageValidator imageValidator, DefaultImageService defaultImageService, ImageService imageService) {
         this.imageValidator = imageValidator;
+        this.defaultImageService = defaultImageService;
         this.imageService = imageService;
     }
 
@@ -31,7 +34,7 @@ public class ImageResource {
                          @RestQuery("selected") boolean isSelected,
                          @RestForm("file") FileUpload imageUpload) {
         imageValidator.validate(imageUpload);
-        var plantImageResponse = imageService.persist(plantId, isSelected, imageUpload);
+        var plantImageResponse = defaultImageService.persist(plantId, isSelected, imageUpload);
         URI location = URI.create("/api/v1/plants/%s/images".formatted(plantId));
         return Response.created(location).entity(plantImageResponse).build();
     }
@@ -39,7 +42,7 @@ public class ImageResource {
     @GET
     @Path("/{id}/images/card")
     public Response fetchImagePlantCard(@RestPath("id") Long plantId) {
-        var downloadImageResponse = imageService.obtainImageToPlantCardBy(plantId);
+        var downloadImageResponse = defaultImageService.obtainImageToPlantCardBy(plantId);
         return Response.ok(downloadImageResponse.imageBytes())
                 .header("Content-Type", downloadImageResponse.contentType())
                 .build();
@@ -48,7 +51,7 @@ public class ImageResource {
     @GET
     @Path("/{id}/images")
     public Response fetchImagePlant(@RestPath("id") Long plantId, @RestQuery("image_name") String filename) {
-        var downloadImageResponse = imageService.obtainImagePlantBy(plantId, filename);
+        var downloadImageResponse = defaultImageService.obtainImagePlantBy(plantId, filename);
         return Response.ok(downloadImageResponse.imageBytes())
                 .header("Content-Type", downloadImageResponse.contentType())
                 .build();
@@ -57,7 +60,14 @@ public class ImageResource {
     @PATCH
     @Path("/{plantId}/images/{imageId}")
     public Response updateIsSelected(@RestPath("plantId") long plantId, @RestPath("imageId") long imageId) {
-        boolean isChanged = imageService.setImageAsSelected(imageId, plantId);
+        boolean isChanged = defaultImageService.setImageAsSelected(imageId, plantId);
         return Response.ok(isChanged).build();
+    }
+
+    @GET
+    @Path("/{plantId}/images/selection")
+    public Response fetchImagesPerPlantToSelection(long plantId) {
+        var imageSelectionResponse = imageService.obtainImagesToSelection(plantId);
+        return Response.ok(imageSelectionResponse).build();
     }
 }

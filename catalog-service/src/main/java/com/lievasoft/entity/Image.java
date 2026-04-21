@@ -2,14 +2,22 @@ package com.lievasoft.entity;
 
 import com.lievasoft.dto.plant.ImageToPlantDetailsDTO;
 import com.lievasoft.dto.response.ImageCardResponse;
+import com.lievasoft.dto.response.image.ImageSelectionResponse;
 import jakarta.persistence.*;
 
 import static com.lievasoft.plant.PlantConstant.*;
+import static com.lievasoft.statement.ImageQuery.IMAGE_SELECTION_PER_PLANT;
+import static com.lievasoft.statement.ImageQuery.IMAGE_SELECTION_PER_PLANT_QUERY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity
 @Table(name = "images")
 @NamedNativeQueries({
+        @NamedNativeQuery(
+                name = IMAGE_SELECTION_PER_PLANT,
+                query = IMAGE_SELECTION_PER_PLANT_QUERY,
+                resultSetMapping = "ImageSelectionResponse"
+        ),
         @NamedNativeQuery(
                 name = FETCH_IMAGE_PLANT_CARD,
                 query = FETCH_IMAGE_PLANT_CARD_QUERY,
@@ -19,9 +27,20 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
                 name = FETCH_IMAGE_PLANT_CARDS,
                 query = FETCH_IMAGE_PLANT_CARDS_QUERY,
                 resultSetMapping = "ImageCardToPlantDetails"
-        )
+        ),
 })
 @SqlResultSetMappings({
+        @SqlResultSetMapping(
+                name = "ImageSelectionResponse",
+                classes = @ConstructorResult(
+                        targetClass = ImageSelectionResponse.class,
+                        columns = {
+                                @ColumnResult(name = "id", type = Long.class),
+                                @ColumnResult(name = "is_selected", type = Boolean.class),
+                                @ColumnResult(name = "plant_id", type = Long.class),
+                        }
+                )
+        ),
         @SqlResultSetMapping(
                 name = "ImageCardMapping",
                 classes = @ConstructorResult(
