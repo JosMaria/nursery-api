@@ -49,9 +49,16 @@ public class ImageResource {
     }
 
     @GET
+    @Path("/{plantId}/images/selection")
+    public Response fetchImagesPerPlantToSelection(long plantId) {
+        var imageSelectionResponse = imageService.obtainImagesToSelection(plantId);
+        return Response.ok(imageSelectionResponse).build();
+    }
+
+    @GET
     @Path("/{id}/images")
     public Response fetchImagePlant(@RestPath("id") Long plantId, @RestQuery("image_name") String filename) {
-        var downloadImageResponse = defaultImageService.obtainImagePlantBy(plantId, filename);
+        var downloadImageResponse = imageService.obtainImagePlantBy(plantId, filename);
         return Response.ok(downloadImageResponse.imageBytes())
                 .header("Content-Type", downloadImageResponse.contentType())
                 .build();
@@ -60,14 +67,7 @@ public class ImageResource {
     @PATCH
     @Path("/{plantId}/images/{imageId}")
     public Response updateIsSelected(@RestPath("plantId") long plantId, @RestPath("imageId") long imageId) {
-        boolean isChanged = defaultImageService.setImageAsSelected(imageId, plantId);
+        boolean isChanged = imageService.setImageAsSelected(plantId, imageId);
         return Response.ok(isChanged).build();
-    }
-
-    @GET
-    @Path("/{plantId}/images/selection")
-    public Response fetchImagesPerPlantToSelection(long plantId) {
-        var imageSelectionResponse = imageService.obtainImagesToSelection(plantId);
-        return Response.ok(imageSelectionResponse).build();
     }
 }
