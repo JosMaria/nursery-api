@@ -51,14 +51,14 @@ public class ImageResource {
     @GET
     @Path("/{plantId}/images/selection")
     public Response fetchImagesPerPlantToSelection(long plantId) {
-        var imageSelectionResponse = imageService.obtainImagesToSelection(plantId);
+        var imageSelectionResponse = imageService.obtainImagesSummaryToSelect(plantId);
         return Response.ok(imageSelectionResponse).build();
     }
 
     @GET
-    @Path("/{id}/images")
-    public Response fetchImagePlant(@RestPath("id") Long plantId, @RestQuery("image_name") String filename) {
-        var downloadImageResponse = imageService.obtainImagePlantBy(plantId, filename);
+    @Path("/{plantId}/images/{imageId}")
+    public Response fetchImagePlant(long plantId, long imageId) {
+        var downloadImageResponse = imageService.obtainImagePlantBy(plantId, imageId);
         return Response.ok(downloadImageResponse.imageBytes())
                 .header("Content-Type", downloadImageResponse.contentType())
                 .build();

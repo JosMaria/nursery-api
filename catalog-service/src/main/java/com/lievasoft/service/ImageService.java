@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface ImageService {
 
-    List<ImageSelectionResponse> obtainImagesToSelection(Long plantId);
+    List<ImageSelectionResponse> obtainImagesSummaryToSelect(Long plantId);
 
-    DownloadImageResponse obtainImagePlantBy(Long plantId, String filename);
+    DownloadImageResponse obtainImagePlantBy(long plantId, long imageId);
 
     boolean setImageAsSelected(long plantId, long imageId);
 }

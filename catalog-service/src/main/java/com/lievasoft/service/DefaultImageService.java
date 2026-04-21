@@ -34,16 +34,17 @@ public class DefaultImageService implements ImageService {
     }
 
     @Override
-    public List<ImageSelectionResponse> obtainImagesToSelection(final Long plantId) {
+    public List<ImageSelectionResponse> obtainImagesSummaryToSelect(final Long plantId) {
         LOG.infof("Obtaining image summary to selection from plantId: %s", plantId);
-        return imageRepository.findImagesPerPlant(plantId);
+        return imageRepository.findImagesPerPlantToSelect(plantId);
     }
 
     @Override
-    public DownloadImageResponse obtainImagePlantBy(Long plantId, String filename) {
-        var obtainedImage = imageRepository.findImagePlantBy(plantId, filename);
-        LOG.infof("Downloading image for plant with id: %s", plantId);
-        byte[] imageBytes = imageStorageService.downloadImageFromFileSystem(filename, obtainedImage.getStoragePath());
+    public DownloadImageResponse obtainImagePlantBy(long plantId, long imageId) {
+        var obtainedImage = imageRepository.findImagePlantBy(plantId, imageId);
+        LOG.infof("Downloading image with ID: %s and plantId: %s", imageId, plantId);
+        byte[] imageBytes = imageStorageService.downloadImageFromFileSystem(
+                obtainedImage.getFilename(), obtainedImage.getStoragePath());
         return new DownloadImageResponse(imageBytes, obtainedImage.getContentType());
     }
 

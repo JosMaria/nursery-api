@@ -36,7 +36,6 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
                         targetClass = ImageSelectionResponse.class,
                         columns = {
                                 @ColumnResult(name = "id", type = Long.class),
-                                @ColumnResult(name = "filename", type = String.class),
                                 @ColumnResult(name = "is_selected", type = Boolean.class),
                         }
                 )

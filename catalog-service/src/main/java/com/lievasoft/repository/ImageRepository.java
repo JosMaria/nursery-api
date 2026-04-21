@@ -23,7 +23,7 @@ public class ImageRepository implements PanacheRepository<Image> {
 
     private static final Logger LOG = Logger.getLogger(ImageRepository.class);
 
-    public List<ImageSelectionResponse> findImagesPerPlant(long plantId) {
+    public List<ImageSelectionResponse> findImagesPerPlantToSelect(long plantId) {
         return getEntityManager()
                 .createNamedQuery(IMAGE_SELECTION_PER_PLANT, ImageSelectionResponse.class)
                 .setParameter("plantId", plantId)
@@ -57,11 +57,11 @@ public class ImageRepository implements PanacheRepository<Image> {
                 .getResultList();
     }
 
-    public Image findImagePlantBy(Long plantId, String filename) {
-        Map<String, Object> params = Map.of("plantId", plantId, "filename", filename);
-        return find("plant.id = :plantId AND filename = :filename", params)
+    public Image findImagePlantBy(long plantId, long imageId) {
+        Map<String, Object> params = Map.of("plantId", plantId, "imageId", imageId);
+        return find("plant.id = :plantId AND id = :imageId", params)
                 .firstResultOptional()
-                .orElseThrow(() -> new EntityNotFoundException("Image with not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Image with ID: %s and plantId: %s not found".formatted(imageId, plantId)));
     }
 
     public boolean existsByPlant(long plantId) {
