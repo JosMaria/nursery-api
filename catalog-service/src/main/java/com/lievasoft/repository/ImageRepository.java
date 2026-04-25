@@ -1,7 +1,6 @@
 package com.lievasoft.repository;
 
 import com.lievasoft.dto.plant.ImageToPlantDetailsDTO;
-import com.lievasoft.dto.response.ImageCardResponse;
 import com.lievasoft.dto.response.image.ImageSelectionResponse;
 import com.lievasoft.entity.Image;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
@@ -12,9 +11,7 @@ import org.jboss.logging.Logger;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import static com.lievasoft.plant.PlantConstant.FETCH_IMAGE_PLANT_CARD;
 import static com.lievasoft.plant.PlantConstant.FETCH_IMAGE_PLANT_CARDS;
 import static com.lievasoft.statement.ImageQuery.IMAGE_SELECTION_PER_PLANT;
 
@@ -40,16 +37,6 @@ public class ImageRepository implements PanacheRepository<Image> {
                 });
     }
 
-    public ImageCardResponse fetchImagePlantCardOrThrowException(Long plantId) {
-        var maybeImageCard = getEntityManager()
-                .createNamedQuery(FETCH_IMAGE_PLANT_CARD, ImageCardResponse.class)
-                .setParameter("id", plantId)
-                .getSingleResult();
-
-        return Optional.ofNullable(maybeImageCard)
-                .orElseThrow(() -> new EntityNotFoundException("Image with plant_id: %s not found".formatted(plantId)));
-    }
-
     public List<ImageToPlantDetailsDTO> fetchImageUrlsByPlantId(Long plantId) {
         return getEntityManager()
                 .createNamedQuery(FETCH_IMAGE_PLANT_CARDS, ImageToPlantDetailsDTO.class)
@@ -62,6 +49,13 @@ public class ImageRepository implements PanacheRepository<Image> {
         return find("plant.id = :plantId AND id = :imageId", params)
                 .firstResultOptional()
                 .orElseThrow(() -> new EntityNotFoundException("Image with ID: %s and plantId: %s not found".formatted(imageId, plantId)));
+    }
+
+    public Image findSelectedImagePlantBy(long plantId) {
+        Map<String, Object> params = Map.of("plantId", plantId);
+        return find("plant.id = :plantId AND isSelected = TRUE", params)
+                .firstResultOptional()
+                .orElseThrow(() -> new EntityNotFoundException("Image selected with plantId: %s not found".formatted(plantId)));
     }
 
     public boolean existsByPlant(long plantId) {

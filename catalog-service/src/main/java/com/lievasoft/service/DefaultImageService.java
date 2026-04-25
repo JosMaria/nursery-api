@@ -40,9 +40,18 @@ public class DefaultImageService implements ImageService {
     }
 
     @Override
-    public DownloadImageResponse obtainImagePlantBy(long plantId, long imageId) {
+    public DownloadImageResponse obtainImagePlant(long plantId, long imageId) {
         var obtainedImage = imageRepository.findImagePlantBy(plantId, imageId);
         LOG.infof("Downloading image with ID: %s and plantId: %s", imageId, plantId);
+        byte[] imageBytes = imageStorageService.downloadImageFromFileSystem(
+                obtainedImage.getFilename(), obtainedImage.getStoragePath());
+        return new DownloadImageResponse(imageBytes, obtainedImage.getContentType());
+    }
+
+    @Override
+    public DownloadImageResponse obtainSelectedImagePlant(long plantId) {
+        var obtainedImage = imageRepository.findSelectedImagePlantBy(plantId);
+        LOG.infof("Downloading selected image plantId: %s", plantId);
         byte[] imageBytes = imageStorageService.downloadImageFromFileSystem(
                 obtainedImage.getFilename(), obtainedImage.getStoragePath());
         return new DownloadImageResponse(imageBytes, obtainedImage.getContentType());
@@ -83,13 +92,5 @@ public class DefaultImageService implements ImageService {
 
         persistedPlant.addImage(imageToPersist);
         return new PlantImageResponse(imageToPersist);
-    }
-
-    public DownloadImageResponse obtainImageToPlantCardBy(Long plantId) {
-        var imageCardResponse = imageRepository.fetchImagePlantCardOrThrowException(plantId);
-        LOG.infof("Downloading image for plant card with id: %s", plantId);
-        byte[] imageBytes = imageStorageService.downloadImageFromFileSystem(
-                imageCardResponse.filename(), imageCardResponse.storagePath());
-        return new DownloadImageResponse(imageBytes, imageCardResponse.contentType());
     }
 }

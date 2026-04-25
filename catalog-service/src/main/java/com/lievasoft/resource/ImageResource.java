@@ -40,15 +40,6 @@ public class ImageResource {
     }
 
     @GET
-    @Path("/{id}/images/card")
-    public Response fetchImagePlantCard(@RestPath("id") Long plantId) {
-        var downloadImageResponse = defaultImageService.obtainImageToPlantCardBy(plantId);
-        return Response.ok(downloadImageResponse.imageBytes())
-                .header("Content-Type", downloadImageResponse.contentType())
-                .build();
-    }
-
-    @GET
     @Path("/{plantId}/images/selection")
     public Response fetchImagesPerPlantToSelection(long plantId) {
         var imageSelectionResponse = imageService.obtainImagesSummaryToSelect(plantId);
@@ -56,9 +47,18 @@ public class ImageResource {
     }
 
     @GET
+    @Path("/{plantId}/images/selected")
+    public Response fetchImagePlant(long plantId) {
+        var downloadImageResponse = imageService.obtainSelectedImagePlant(plantId);
+        return Response.ok(downloadImageResponse.imageBytes())
+                .header("Content-Type", downloadImageResponse.contentType())
+                .build();
+    }
+
+    @GET
     @Path("/{plantId}/images/{imageId}")
     public Response fetchImagePlant(long plantId, long imageId) {
-        var downloadImageResponse = imageService.obtainImagePlantBy(plantId, imageId);
+        var downloadImageResponse = imageService.obtainImagePlant(plantId, imageId);
         return Response.ok(downloadImageResponse.imageBytes())
                 .header("Content-Type", downloadImageResponse.contentType())
                 .build();

@@ -20,14 +20,6 @@ public class PlantConstant {
                     OFFSET :offset
             """;
 
-    public static final String FETCH_IMAGE_PLANT_CARD = "Image.fetchImageCard";
-    public static final String FETCH_IMAGE_PLANT_CARD_QUERY = """
-                SELECT filename, storage_path, content_type
-                FROM images
-                WHERE plant_id = :id
-                LIMIT 1
-            """;
-
     public static final String FETCH_IMAGE_PLANT_CARDS = "Image.fetchImageCards";
     public static final String FETCH_IMAGE_PLANT_CARDS_QUERY = """
                 SELECT filename, storage_path

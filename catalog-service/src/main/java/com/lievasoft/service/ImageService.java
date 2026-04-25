@@ -9,7 +9,9 @@ public interface ImageService {
 
     List<ImageSelectionResponse> obtainImagesSummaryToSelect(Long plantId);
 
-    DownloadImageResponse obtainImagePlantBy(long plantId, long imageId);
+    DownloadImageResponse obtainImagePlant(long plantId, long imageId);
+
+    DownloadImageResponse obtainSelectedImagePlant(long plantId);
 
     boolean setImageAsSelected(long plantId, long imageId);
 }

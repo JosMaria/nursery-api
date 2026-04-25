@@ -1,11 +1,11 @@
 package com.lievasoft.entity;
 
 import com.lievasoft.dto.plant.ImageToPlantDetailsDTO;
-import com.lievasoft.dto.response.ImageCardResponse;
 import com.lievasoft.dto.response.image.ImageSelectionResponse;
 import jakarta.persistence.*;
 
-import static com.lievasoft.plant.PlantConstant.*;
+import static com.lievasoft.plant.PlantConstant.FETCH_IMAGE_PLANT_CARDS;
+import static com.lievasoft.plant.PlantConstant.FETCH_IMAGE_PLANT_CARDS_QUERY;
 import static com.lievasoft.statement.ImageQuery.IMAGE_SELECTION_PER_PLANT;
 import static com.lievasoft.statement.ImageQuery.IMAGE_SELECTION_PER_PLANT_QUERY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
@@ -17,11 +17,6 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
                 name = IMAGE_SELECTION_PER_PLANT,
                 query = IMAGE_SELECTION_PER_PLANT_QUERY,
                 resultSetMapping = "ImageSelectionResponse"
-        ),
-        @NamedNativeQuery(
-                name = FETCH_IMAGE_PLANT_CARD,
-                query = FETCH_IMAGE_PLANT_CARD_QUERY,
-                resultSetMapping = "ImageCardMapping"
         ),
         @NamedNativeQuery(
                 name = FETCH_IMAGE_PLANT_CARDS,
@@ -37,17 +32,6 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
                         columns = {
                                 @ColumnResult(name = "id", type = Long.class),
                                 @ColumnResult(name = "is_selected", type = Boolean.class),
-                        }
-                )
-        ),
-        @SqlResultSetMapping(
-                name = "ImageCardMapping",
-                classes = @ConstructorResult(
-                        targetClass = ImageCardResponse.class,
-                        columns = {
-                                @ColumnResult(name = "filename", type = String.class),
-                                @ColumnResult(name = "storage_path", type = String.class),
-                                @ColumnResult(name = "content_type", type = String.class)
                         }
                 )
         ),
