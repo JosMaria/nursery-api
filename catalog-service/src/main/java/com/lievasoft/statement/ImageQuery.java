@@ -8,5 +8,6 @@ public class ImageQuery {
             SELECT id, is_selected
             FROM images
             WHERE plant_id = :plantId
+            ORDER BY is_selected DESC
             """;
 }
