@@ -34,6 +34,32 @@ public class DefaultImageService implements ImageService {
     }
 
     @Override
+    @Transactional
+    public PlantImageResponse persist(long plantId, boolean isSelected, FileUpload imageUpload) {
+        var persistedPlant = plantRepository.obtainByIdOrThrowException(plantId);
+        var uploadImageResponse = imageStorageService.uploadImageToFileSystem(plantId, imageUpload);
+
+        if (isSelected) {
+            boolean existImages = imageRepository.existsByPlant(plantId);
+            if (existImages) {
+                int rowsAffected = update("isSelected = FALSE WHERE plant.id = ?1", plantId);
+                LOG.infof("%s images affected given plantId %s", rowsAffected, plantId);
+            }
+        }
+
+        var imageToPersist = new Image(
+                uploadImageResponse.storagePath(),
+                uploadImageResponse.filename(),
+                imageUpload.size(),
+                imageUpload.contentType(),
+                isSelected
+        );
+
+        persistedPlant.addImage(imageToPersist);
+        return new PlantImageResponse(imageToPersist);
+    }
+
+    @Override
     public List<ImageSelectionResponse> obtainImagesSummaryToSelect(final Long plantId) {
         LOG.infof("Obtaining image summary to selection from plantId: %s", plantId);
         return imageRepository.findImagesPerPlantToSelect(plantId);
@@ -67,30 +93,5 @@ public class DefaultImageService implements ImageService {
             return affectedRows == 1;
 
         } else return false;
-    }
-
-    @Transactional
-    public PlantImageResponse persist(long plantId, boolean isSelected, FileUpload imageUpload) {
-        var persistedPlant = plantRepository.obtainByIdOrThrowException(plantId);
-        var uploadImageResponse = imageStorageService.uploadImageToFileSystem(plantId, imageUpload);
-
-        if (isSelected) {
-            boolean existImages = imageRepository.existsByPlant(plantId);
-            if (existImages) {
-                int rowsAffected = update("isSelected = FALSE WHERE plant.id = ?1", plantId);
-                LOG.infof("%s images affected given plantId %s", rowsAffected, plantId);
-            }
-        }
-
-        var imageToPersist = new Image(
-                uploadImageResponse.storagePath(),
-                uploadImageResponse.filename(),
-                imageUpload.size(),
-                imageUpload.contentType(),
-                isSelected
-        );
-
-        persistedPlant.addImage(imageToPersist);
-        return new PlantImageResponse(imageToPersist);
     }
 }

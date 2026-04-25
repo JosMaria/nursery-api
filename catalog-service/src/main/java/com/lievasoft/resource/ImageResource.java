@@ -1,7 +1,6 @@
 package com.lievasoft.resource;
 
 import com.lievasoft.resource.validator.ImageValidator;
-import com.lievasoft.service.DefaultImageService;
 import com.lievasoft.service.ImageService;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PATCH;
@@ -19,12 +18,10 @@ import java.net.URI;
 public class ImageResource {
 
     private final ImageValidator imageValidator;
-    private final DefaultImageService defaultImageService;
     private final ImageService imageService;
 
-    public ImageResource(ImageValidator imageValidator, DefaultImageService defaultImageService, ImageService imageService) {
+    public ImageResource(ImageValidator imageValidator, ImageService imageService) {
         this.imageValidator = imageValidator;
-        this.defaultImageService = defaultImageService;
         this.imageService = imageService;
     }
 
@@ -34,7 +31,7 @@ public class ImageResource {
                          @RestQuery("selected") boolean isSelected,
                          @RestForm("file") FileUpload imageUpload) {
         imageValidator.validate(imageUpload);
-        var plantImageResponse = defaultImageService.persist(plantId, isSelected, imageUpload);
+        var plantImageResponse = imageService.persist(plantId, isSelected, imageUpload);
         URI location = URI.create("/api/v1/plants/%s/images".formatted(plantId));
         return Response.created(location).entity(plantImageResponse).build();
     }
