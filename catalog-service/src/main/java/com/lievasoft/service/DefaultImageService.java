@@ -42,7 +42,7 @@ public class DefaultImageService implements ImageService {
         if (isSelected) {
             boolean existImages = imageRepository.existsByPlant(plantId);
             if (existImages) {
-                int rowsAffected = update("isSelected = FALSE WHERE plant.id = ?1", plantId);
+                int rowsAffected = imageRepository.update("isSelected = FALSE WHERE plant.id = ?1", plantId);
                 LOG.infof("%s images affected given plantId %s", rowsAffected, plantId);
             }
         }

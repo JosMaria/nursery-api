@@ -13,10 +13,6 @@ public record PlantCardResponse(
         boolean isFavorite,
         @JsonProperty("common_name")
         String commonName,
-        BigDecimal price,
-        @JsonProperty("storage_path_image")
-        String storagePathImage,
-        @JsonProperty("filename_image")
-        String filenameImage
+        BigDecimal price
 ) {
 }

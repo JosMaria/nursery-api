@@ -4,12 +4,8 @@ public class PlantConstant {
 
     public static final String FETCH_PLANT_CARDS = "Plant.fetchPlantCards";
     public static final String FETCH_PLANT_CARDS_QUERY = """
-                    SELECT p.id, p.scientific_name, p.is_favorite, cn.name AS common_name, p.price, i.storage_path, i.filename
+                    SELECT p.id, p.scientific_name, p.is_favorite, cn.name AS common_name, p.price
                     FROM plants p
-                    LEFT JOIN (
-                        SELECT DISTINCT ON (plant_id) plant_id, storage_path, filename
-                        FROM images
-                    ) AS i ON i.plant_id = p.id
                     LEFT JOIN (
                         SELECT plant_id, name
                         FROM common_names
