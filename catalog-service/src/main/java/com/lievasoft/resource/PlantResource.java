@@ -30,6 +30,11 @@ public class PlantResource {
     }
 
     @GET
+    public Response fetchAll() {
+        return null;
+    }
+
+    @GET
     @Path("/cards")
     public Response fetchPlantCards(@RestQuery("page") int numberPage,
                                     @RestQuery("size") @DefaultValue("8") int sizePage) {

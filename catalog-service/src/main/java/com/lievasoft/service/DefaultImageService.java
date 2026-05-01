@@ -1,8 +1,8 @@
 package com.lievasoft.service;
 
-import com.lievasoft.dto.response.image.PlantImageResponse;
 import com.lievasoft.dto.response.image.DownloadImageResponse;
 import com.lievasoft.dto.response.image.ImageSelectionResponse;
+import com.lievasoft.dto.response.image.PlantImageResponse;
 import com.lievasoft.entity.Image;
 import com.lievasoft.repository.ImageRepository;
 import com.lievasoft.repository.PlantRepository;
@@ -13,8 +13,6 @@ import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 import java.util.List;
-
-import static io.quarkus.hibernate.orm.panache.PanacheEntityBase.update;
 
 @ApplicationScoped
 public class DefaultImageService implements ImageService {
@@ -69,15 +67,6 @@ public class DefaultImageService implements ImageService {
     public DownloadImageResponse obtainImagePlant(long plantId, long imageId) {
         var obtainedImage = imageRepository.findImagePlantBy(plantId, imageId);
         LOG.infof("Downloading image with ID: %s and plantId: %s", imageId, plantId);
-        byte[] imageBytes = imageStorageService.downloadImageFromFileSystem(
-                obtainedImage.getFilename(), obtainedImage.getStoragePath());
-        return new DownloadImageResponse(imageBytes, obtainedImage.getContentType());
-    }
-
-    @Override
-    public DownloadImageResponse obtainSelectedImagePlant(long plantId) {
-        var obtainedImage = imageRepository.findSelectedImagePlantBy(plantId);
-        LOG.infof("Downloading selected image plantId: %s", plantId);
         byte[] imageBytes = imageStorageService.downloadImageFromFileSystem(
                 obtainedImage.getFilename(), obtainedImage.getStoragePath());
         return new DownloadImageResponse(imageBytes, obtainedImage.getContentType());

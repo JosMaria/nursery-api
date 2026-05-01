@@ -44,15 +44,6 @@ public class ImageResource {
     }
 
     @GET
-    @Path("/{plantId}/images/selected")
-    public Response fetchSelectedImagePlant(long plantId) {
-        var downloadImageResponse = imageService.obtainSelectedImagePlant(plantId);
-        return Response.ok(downloadImageResponse.imageBytes())
-                .header("Content-Type", downloadImageResponse.contentType())
-                .build();
-    }
-
-    @GET
     @Path("/{plantId}/images/{imageId}")
     public Response fetchImagePlant(long plantId, long imageId) {
         var downloadImageResponse = imageService.obtainImagePlant(plantId, imageId);

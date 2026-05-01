@@ -51,13 +51,6 @@ public class ImageRepository implements PanacheRepository<Image> {
                 .orElseThrow(() -> new EntityNotFoundException("Image with ID: %s and plantId: %s not found".formatted(imageId, plantId)));
     }
 
-    public Image findSelectedImagePlantBy(long plantId) {
-        Map<String, Object> params = Map.of("plantId", plantId);
-        return find("plant.id = :plantId AND isSelected = TRUE", params)
-                .firstResultOptional()
-                .orElseThrow(() -> new EntityNotFoundException("Image selected with plantId: %s not found".formatted(plantId)));
-    }
-
     public boolean existsByPlant(long plantId) {
         var query = """
                 SELECT EXISTS (
