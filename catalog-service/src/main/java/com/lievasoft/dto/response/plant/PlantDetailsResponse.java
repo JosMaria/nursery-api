@@ -1,9 +1,9 @@
-package com.lievasoft.dto.response;
+package com.lievasoft.dto.response.plant;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.lievasoft.dto.plant.CommonNameToPlantDetails;
-import com.lievasoft.dto.plant.ImageToPlantDetailsDTO;
-import com.lievasoft.dto.plant.PlantTaxonomy;
+import com.lievasoft.dto.mapping.CommonNameToPlantDetails;
+import com.lievasoft.dto.mapping.ImageToPlantDetailsDTO;
+import com.lievasoft.dto.mapping.PlantTaxonomy;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

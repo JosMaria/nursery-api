@@ -1,7 +1,7 @@
 package com.lievasoft.entity;
 
-import com.lievasoft.dto.plant.CommonNameCreateDTO;
-import com.lievasoft.dto.plant.CommonNameToPlantDetails;
+import com.lievasoft.dto.request.plant.CommonNameCreateDTO;
+import com.lievasoft.dto.mapping.CommonNameToPlantDetails;
 import jakarta.persistence.*;
 
 import static com.lievasoft.plant.PlantConstant.FETCH_COMMON_NAME_TO_PLANT_DETAILS;

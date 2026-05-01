@@ -1,6 +1,6 @@
 package com.lievasoft.resource;
 
-import com.lievasoft.dto.plant.PlantCreateDTO;
+import com.lievasoft.dto.request.plant.PlantCreateDTO;
 import com.lievasoft.resource.validator.PlantValidator;
 import com.lievasoft.service.PlantService;
 import jakarta.ws.rs.*;

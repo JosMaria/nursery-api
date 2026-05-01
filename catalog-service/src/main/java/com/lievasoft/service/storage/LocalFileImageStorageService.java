@@ -1,6 +1,6 @@
 package com.lievasoft.service.storage;
 
-import com.lievasoft.dto.plant.UploadImageResponse;
+import com.lievasoft.dto.mapping.UploadImageResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.multipart.FileUpload;

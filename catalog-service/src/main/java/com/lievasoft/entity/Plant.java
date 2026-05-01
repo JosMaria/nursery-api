@@ -1,8 +1,8 @@
 package com.lievasoft.entity;
 
-import com.lievasoft.dto.plant.PlantCreateDTO;
-import com.lievasoft.dto.plant.PlantTaxonomy;
-import com.lievasoft.dto.response.PlantCardResponse;
+import com.lievasoft.dto.request.plant.PlantCreateDTO;
+import com.lievasoft.dto.mapping.PlantTaxonomy;
+import com.lievasoft.dto.response.plant.PlantCardResponse;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -38,6 +38,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
                                 @ColumnResult(name = "is_favorite", type = Boolean.class),
                                 @ColumnResult(name = "common_name", type = String.class),
                                 @ColumnResult(name = "price", type = BigDecimal.class),
+                                @ColumnResult(name = "image_id", type = Long.class),
                         }
                 )
         ),

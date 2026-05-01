@@ -1,6 +1,6 @@
 package com.lievasoft.service.storage;
 
-import com.lievasoft.dto.plant.UploadImageResponse;
+import com.lievasoft.dto.mapping.UploadImageResponse;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 
 public interface ImageStorageService {

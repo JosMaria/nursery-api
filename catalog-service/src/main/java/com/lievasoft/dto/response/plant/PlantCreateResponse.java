@@ -1,6 +1,8 @@
-package com.lievasoft.dto.plant;
+package com.lievasoft.dto.response.plant;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.lievasoft.dto.request.plant.CommonNameCreateDTO;
+import com.lievasoft.dto.request.plant.TaxonomyCreateDTO;
 import com.lievasoft.entity.Plant;
 
 import java.math.BigDecimal;

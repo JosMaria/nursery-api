@@ -1,7 +1,7 @@
 package com.lievasoft.resource.validator;
 
-import com.lievasoft.dto.plant.CommonNameCreateDTO;
-import com.lievasoft.dto.plant.PlantCreateDTO;
+import com.lievasoft.dto.request.plant.CommonNameCreateDTO;
+import com.lievasoft.dto.request.plant.PlantCreateDTO;
 import com.lievasoft.entity.Country;
 import jakarta.enterprise.context.ApplicationScoped;
 

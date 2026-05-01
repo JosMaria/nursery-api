@@ -1,6 +1,6 @@
 package com.lievasoft.repository;
 
-import com.lievasoft.dto.plant.CommonNameToPlantDetails;
+import com.lievasoft.dto.mapping.CommonNameToPlantDetails;
 import com.lievasoft.entity.CommonName;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;

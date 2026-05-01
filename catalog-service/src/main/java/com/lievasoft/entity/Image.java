@@ -1,6 +1,6 @@
 package com.lievasoft.entity;
 
-import com.lievasoft.dto.plant.ImageToPlantDetailsDTO;
+import com.lievasoft.dto.mapping.ImageToPlantDetailsDTO;
 import com.lievasoft.dto.response.image.ImageSelectionResponse;
 import jakarta.persistence.*;
 

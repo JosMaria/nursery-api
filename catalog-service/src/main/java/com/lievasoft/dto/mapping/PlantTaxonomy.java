@@ -1,4 +1,4 @@
-package com.lievasoft.dto.plant;
+package com.lievasoft.dto.mapping;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

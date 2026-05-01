@@ -4,8 +4,10 @@ public class PlantConstant {
 
     public static final String FETCH_PLANT_CARDS = "Plant.fetchPlantCards";
     public static final String FETCH_PLANT_CARDS_QUERY = """
-                    SELECT p.id, p.scientific_name, p.is_favorite, cn.name AS common_name, p.price
+                    SELECT p.id, p.scientific_name, p.is_favorite, cn.name AS common_name, p.price, i.id AS image_id
                     FROM plants p
+                    LEFT JOIN images i
+                        ON i.plant_id = p.id AND i.is_selected = TRUE
                     LEFT JOIN (
                         SELECT plant_id, name
                         FROM common_names

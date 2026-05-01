@@ -45,7 +45,7 @@ public class ImageResource {
 
     @GET
     @Path("/{plantId}/images/selected")
-    public Response fetchImagePlant(long plantId) {
+    public Response fetchSelectedImagePlant(long plantId) {
         var downloadImageResponse = imageService.obtainSelectedImagePlant(plantId);
         return Response.ok(downloadImageResponse.imageBytes())
                 .header("Content-Type", downloadImageResponse.contentType())

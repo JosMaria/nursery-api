@@ -1,6 +1,6 @@
 package com.lievasoft.entity;
 
-import com.lievasoft.dto.plant.TaxonomyCreateDTO;
+import com.lievasoft.dto.request.plant.TaxonomyCreateDTO;
 import jakarta.persistence.*;
 
 @Entity

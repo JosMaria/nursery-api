@@ -1,4 +1,4 @@
-package com.lievasoft.dto.plant;
+package com.lievasoft.dto.mapping;
 
 public record UploadImageResponse(
         String storagePath,

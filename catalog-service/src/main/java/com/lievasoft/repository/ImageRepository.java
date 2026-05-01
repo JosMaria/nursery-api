@@ -1,6 +1,6 @@
 package com.lievasoft.repository;
 
-import com.lievasoft.dto.plant.ImageToPlantDetailsDTO;
+import com.lievasoft.dto.mapping.ImageToPlantDetailsDTO;
 import com.lievasoft.dto.response.image.ImageSelectionResponse;
 import com.lievasoft.entity.Image;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;

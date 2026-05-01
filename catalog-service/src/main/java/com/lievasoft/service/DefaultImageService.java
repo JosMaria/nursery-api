@@ -1,7 +1,7 @@
 package com.lievasoft.service;
 
-import com.lievasoft.dto.plant.PlantImageResponse;
-import com.lievasoft.dto.response.DownloadImageResponse;
+import com.lievasoft.dto.response.image.PlantImageResponse;
+import com.lievasoft.dto.response.image.DownloadImageResponse;
 import com.lievasoft.dto.response.image.ImageSelectionResponse;
 import com.lievasoft.entity.Image;
 import com.lievasoft.repository.ImageRepository;

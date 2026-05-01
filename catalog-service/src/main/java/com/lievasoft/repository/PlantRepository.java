@@ -1,8 +1,8 @@
 package com.lievasoft.repository;
 
-import com.lievasoft.dto.plant.PaginatedResult;
-import com.lievasoft.dto.plant.PlantTaxonomy;
-import com.lievasoft.dto.response.PlantCardResponse;
+import com.lievasoft.dto.response.plant.PaginatedResult;
+import com.lievasoft.dto.mapping.PlantTaxonomy;
+import com.lievasoft.dto.response.plant.PlantCardResponse;
 import com.lievasoft.entity.Plant;
 import com.lievasoft.exception.PlantNotFoundException;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;

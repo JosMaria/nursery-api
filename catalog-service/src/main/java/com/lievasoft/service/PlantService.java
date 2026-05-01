@@ -1,10 +1,10 @@
 package com.lievasoft.service;
 
-import com.lievasoft.dto.plant.PaginatedResult;
-import com.lievasoft.dto.plant.PlantCreateDTO;
-import com.lievasoft.dto.plant.PlantCreateResponse;
-import com.lievasoft.dto.response.PlantCardResponse;
-import com.lievasoft.dto.response.PlantDetailsResponse;
+import com.lievasoft.dto.response.plant.PaginatedResult;
+import com.lievasoft.dto.request.plant.PlantCreateDTO;
+import com.lievasoft.dto.response.plant.PlantCreateResponse;
+import com.lievasoft.dto.response.plant.PlantCardResponse;
+import com.lievasoft.dto.response.plant.PlantDetailsResponse;
 import com.lievasoft.entity.CommonName;
 import com.lievasoft.entity.Plant;
 import com.lievasoft.entity.Taxonomy;

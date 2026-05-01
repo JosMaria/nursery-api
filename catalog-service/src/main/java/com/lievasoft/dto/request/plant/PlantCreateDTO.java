@@ -1,4 +1,4 @@
-package com.lievasoft.dto.plant;
+package com.lievasoft.dto.request.plant;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
