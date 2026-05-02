@@ -1,12 +1,11 @@
 package com.lievasoft.repository;
 
-import com.lievasoft.dto.response.plant.PaginatedResult;
 import com.lievasoft.dto.mapping.PlantTaxonomy;
+import com.lievasoft.dto.response.plant.PaginatedResult;
 import com.lievasoft.dto.response.plant.PlantCardResponse;
 import com.lievasoft.dto.response.plant.PlantSummaryResponse;
 import com.lievasoft.entity.Plant;
 import com.lievasoft.exception.PlantNotFoundException;
-import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
@@ -56,10 +55,6 @@ public class PlantRepository implements PanacheRepository<Plant> {
 
         return Optional.ofNullable(plantTaxonomy)
                 .orElseThrow(() -> new PlantNotFoundException(plantId));
-    }
-
-    public int countOfFavorites() {
-        return (int) count("isFavorite = TRUE");
     }
 
     @Transactional

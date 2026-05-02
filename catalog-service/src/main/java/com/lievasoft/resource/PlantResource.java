@@ -1,7 +1,6 @@
 package com.lievasoft.resource;
 
 import com.lievasoft.dto.request.plant.PlantCreateDTO;
-import com.lievasoft.dto.response.plant.PlantSummaryResponse;
 import com.lievasoft.resource.validator.PlantValidator;
 import com.lievasoft.service.PlantService;
 import jakarta.ws.rs.*;
@@ -38,10 +37,10 @@ public class PlantResource {
 
     @GET
     @Path("/cards")
-    public Response fetchPlantCards(@RestQuery("page") int numberPage,
-                                    @RestQuery("size") @DefaultValue("8") int sizePage) {
-        var plantCardsResponse = plantService.obtainPlantCards(numberPage, sizePage);
-        return Response.ok(plantCardsResponse).build();
+    public Response fetchPlantCardPage(@RestQuery("page") int numberPage,
+                                       @RestQuery("size") @DefaultValue("8") int sizePage) {
+        var plantCardPageResponse = plantService.obtainPlantCardPage(numberPage, sizePage);
+        return Response.ok(plantCardPageResponse).build();
     }
 
     @GET
@@ -53,8 +52,8 @@ public class PlantResource {
 
     @PATCH
     @Path("/{id}/favorite")
-    public Response updateIsFavorite(@RestPath("id") Long plantId, @RestQuery("favorite") boolean isFavorite) {
-        boolean isChanged = plantService.changeIsFavorite(plantId, isFavorite);
+    public Response updateFavoritePlant(@RestPath("id") Long plantId, @RestQuery("favorite") boolean isFavorite) {
+        boolean isChanged = plantService.changeFavoritePlant(plantId, isFavorite);
         return Response.ok(isChanged).build();
     }
 }

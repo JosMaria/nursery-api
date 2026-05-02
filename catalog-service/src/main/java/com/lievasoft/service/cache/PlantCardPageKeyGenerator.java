@@ -7,9 +7,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import java.lang.reflect.Method;
 
 @ApplicationScoped
-public class PlantCardKeyGenerator implements CacheKeyGenerator {
+public class PlantCardPageKeyGenerator implements CacheKeyGenerator {
 
-    public static final String PLANT_CARDS_CACHE = "plant-cards";
+    public static final String PLANT_CARD_PAGE_CACHE = "plant-cards-page";
     public static final int CACHED_NUMBER_PAGE = 0;
     public static final int CACHED_SIZE_PAGE = 8;
 
