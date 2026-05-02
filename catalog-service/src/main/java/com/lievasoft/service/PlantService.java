@@ -1,10 +1,7 @@
 package com.lievasoft.service;
 
-import com.lievasoft.dto.response.plant.PaginatedResult;
+import com.lievasoft.dto.response.plant.*;
 import com.lievasoft.dto.request.plant.PlantCreateDTO;
-import com.lievasoft.dto.response.plant.PlantCreateResponse;
-import com.lievasoft.dto.response.plant.PlantCardResponse;
-import com.lievasoft.dto.response.plant.PlantDetailsResponse;
 import com.lievasoft.entity.CommonName;
 import com.lievasoft.entity.Plant;
 import com.lievasoft.entity.Taxonomy;
@@ -20,6 +17,7 @@ import io.quarkus.redis.datasource.keys.KeyCommands;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.jboss.logging.Logger;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.lievasoft.service.cache.PlantCardKeyGenerator.*;
@@ -63,6 +61,10 @@ public class PlantService {
                 plantCreateDTO.taxonomyDTO(),
                 plantCreateDTO.commonNamesDTO()
         );
+    }
+
+    public List<PlantSummaryResponse> obtainPlantSummaries() {
+        return plantRepository.obtainPlantsSummary();
     }
 
     public PaginatedResult<PlantCardResponse> obtainPlantCards(int numberPage, int sizePage) {

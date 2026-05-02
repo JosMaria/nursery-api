@@ -1,6 +1,7 @@
 package com.lievasoft.resource;
 
 import com.lievasoft.dto.request.plant.PlantCreateDTO;
+import com.lievasoft.dto.response.plant.PlantSummaryResponse;
 import com.lievasoft.resource.validator.PlantValidator;
 import com.lievasoft.service.PlantService;
 import jakarta.ws.rs.*;
@@ -30,8 +31,9 @@ public class PlantResource {
     }
 
     @GET
-    public Response fetchAll() {
-        return null;
+    public Response fetchPlantSummaries() {
+        var plantSummariesResponse = plantService.obtainPlantSummaries();
+        return Response.ok(plantSummariesResponse).build();
     }
 
     @GET

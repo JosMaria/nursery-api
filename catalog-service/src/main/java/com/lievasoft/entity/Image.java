@@ -4,10 +4,7 @@ import com.lievasoft.dto.mapping.ImageToPlantDetailsDTO;
 import com.lievasoft.dto.response.image.ImageSelectionResponse;
 import jakarta.persistence.*;
 
-import static com.lievasoft.plant.PlantConstant.FETCH_IMAGE_PLANT_CARDS;
-import static com.lievasoft.plant.PlantConstant.FETCH_IMAGE_PLANT_CARDS_QUERY;
-import static com.lievasoft.statement.ImageQuery.IMAGE_SELECTION_PER_PLANT;
-import static com.lievasoft.statement.ImageQuery.IMAGE_SELECTION_PER_PLANT_QUERY;
+import static com.lievasoft.statement.ImageQuery.*;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity

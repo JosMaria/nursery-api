@@ -12,7 +12,7 @@ import org.jboss.logging.Logger;
 import java.util.List;
 import java.util.Map;
 
-import static com.lievasoft.plant.PlantConstant.FETCH_IMAGE_PLANT_CARDS;
+import static com.lievasoft.statement.ImageQuery.FETCH_IMAGE_PLANT_CARDS;
 import static com.lievasoft.statement.ImageQuery.IMAGE_SELECTION_PER_PLANT;
 
 @ApplicationScoped

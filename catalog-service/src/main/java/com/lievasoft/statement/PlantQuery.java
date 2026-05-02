@@ -1,6 +1,6 @@
-package com.lievasoft.plant;
+package com.lievasoft.statement;
 
-public class PlantConstant {
+public class PlantQuery {
 
     public static final String FETCH_PLANT_CARDS = "Plant.fetchPlantCards";
     public static final String FETCH_PLANT_CARDS_QUERY = """
@@ -16,13 +16,6 @@ public class PlantConstant {
                     ORDER BY p.is_favorite DESC
                     LIMIT :limit
                     OFFSET :offset
-            """;
-
-    public static final String FETCH_IMAGE_PLANT_CARDS = "Image.fetchImageCards";
-    public static final String FETCH_IMAGE_PLANT_CARDS_QUERY = """
-                SELECT filename, storage_path
-                FROM images
-                WHERE plant_id = :id
             """;
 
     public static final String FETCH_PLANT_TAXONOMY = "Plant.fetchPlantTaxonomy";

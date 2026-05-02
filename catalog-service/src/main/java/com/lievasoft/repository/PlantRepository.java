@@ -3,8 +3,10 @@ package com.lievasoft.repository;
 import com.lievasoft.dto.response.plant.PaginatedResult;
 import com.lievasoft.dto.mapping.PlantTaxonomy;
 import com.lievasoft.dto.response.plant.PlantCardResponse;
+import com.lievasoft.dto.response.plant.PlantSummaryResponse;
 import com.lievasoft.entity.Plant;
 import com.lievasoft.exception.PlantNotFoundException;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
@@ -13,8 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.lievasoft.plant.PlantConstant.FETCH_PLANT_CARDS;
-import static com.lievasoft.plant.PlantConstant.FETCH_PLANT_TAXONOMY;
+import static com.lievasoft.statement.PlantQuery.FETCH_PLANT_CARDS;
+import static com.lievasoft.statement.PlantQuery.FETCH_PLANT_TAXONOMY;
 
 @ApplicationScoped
 public class PlantRepository implements PanacheRepository<Plant> {
@@ -22,6 +24,12 @@ public class PlantRepository implements PanacheRepository<Plant> {
     @Transactional
     public void create(Plant plant) {
         persist(plant);
+    }
+
+    public List<PlantSummaryResponse> obtainPlantsSummary() {
+        return findAll()
+                .project(PlantSummaryResponse.class)
+                .list();
     }
 
     public PaginatedResult<PlantCardResponse> fetchPaginatedPlantCards(int numberPage, int size) {

@@ -1,7 +1,7 @@
 package com.lievasoft.entity;
 
-import com.lievasoft.dto.request.plant.PlantCreateDTO;
 import com.lievasoft.dto.mapping.PlantTaxonomy;
+import com.lievasoft.dto.request.plant.PlantCreateDTO;
 import com.lievasoft.dto.response.plant.PlantCardResponse;
 import jakarta.persistence.*;
 
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.lievasoft.plant.PlantConstant.*;
+import static com.lievasoft.statement.PlantQuery.*;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity
@@ -25,7 +25,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
                 name = FETCH_PLANT_TAXONOMY,
                 query = FETCH_PLANT_TAXONOMY_QUERY,
                 resultSetMapping = "PlantTaxonomyMapping"
-        )
+        ),
 })
 @SqlResultSetMappings({
         @SqlResultSetMapping(

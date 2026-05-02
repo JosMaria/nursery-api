@@ -4,8 +4,8 @@ import com.lievasoft.dto.request.plant.CommonNameCreateDTO;
 import com.lievasoft.dto.mapping.CommonNameToPlantDetails;
 import jakarta.persistence.*;
 
-import static com.lievasoft.plant.PlantConstant.FETCH_COMMON_NAME_TO_PLANT_DETAILS;
-import static com.lievasoft.plant.PlantConstant.FETCH_COMMON_NAME_TO_PLANT_DETAILS_QUERY;
+import static com.lievasoft.statement.PlantQuery.FETCH_COMMON_NAME_TO_PLANT_DETAILS;
+import static com.lievasoft.statement.PlantQuery.FETCH_COMMON_NAME_TO_PLANT_DETAILS_QUERY;
 
 @Entity
 @Table(name = "common_names")

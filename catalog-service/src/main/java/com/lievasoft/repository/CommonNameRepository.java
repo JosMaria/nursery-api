@@ -7,7 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.List;
 
-import static com.lievasoft.plant.PlantConstant.FETCH_COMMON_NAME_TO_PLANT_DETAILS;
+import static com.lievasoft.statement.PlantQuery.FETCH_COMMON_NAME_TO_PLANT_DETAILS;
 
 @ApplicationScoped
 public class CommonNameRepository implements PanacheRepository<CommonName> {
