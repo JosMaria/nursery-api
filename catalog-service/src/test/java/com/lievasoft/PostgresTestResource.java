@@ -8,32 +8,28 @@ import java.util.Map;
 
 public class PostgresTestResource implements QuarkusTestResourceLifecycleManager {
 
-    private static PostgreSQLContainer<?> POSTGRES;
+    private PostgreSQLContainer<?> postgreSQLContainer;
 
     @Override
     public Map<String, String> start() {
         var dockerImageName = DockerImageName.parse("postgres:17-alpine");
-        POSTGRES = new PostgreSQLContainer<>(dockerImageName)
+        postgreSQLContainer = new PostgreSQLContainer<>(dockerImageName)
                 .withDatabaseName("test_nursery_db")
                 .withUsername("test_user")
-                .withPassword("test_password")
-                .withReuse(true);
+                .withPassword("test_password");
 
-        POSTGRES.start();
+        postgreSQLContainer.start();
         return Map.of(
-                "quarkus.datasource.jdbc.url", POSTGRES.getJdbcUrl(),
-                "quarkus.datasource.username", POSTGRES.getUsername(),
-                "quarkus.datasource.password", POSTGRES.getPassword(),
+                "quarkus.datasource.jdbc.url", postgreSQLContainer.getJdbcUrl(),
+                "quarkus.datasource.username", postgreSQLContainer.getUsername(),
+                "quarkus.datasource.password", postgreSQLContainer.getPassword(),
                 "quarkus.hibernate-orm.schema-management.strategy", "drop-and-create"
         );
     }
 
     @Override
     public void stop() {
-        IO.println("⚠️ Contenedor NO fue eliminado. Limpiar manualmente:");
-        IO.println("docker stop " + POSTGRES.getContainerId());
-        IO.println("docker rm " + POSTGRES.getContainerId());
-//        if (POSTGRES.isCreated())
-//            POSTGRES.stop();
+        if (postgreSQLContainer.isCreated())
+            postgreSQLContainer.stop();
     }
 }
