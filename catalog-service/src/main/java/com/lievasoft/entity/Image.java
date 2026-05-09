@@ -1,10 +1,10 @@
 package com.lievasoft.entity;
 
-import com.lievasoft.dto.mapping.ImageToPlantDetailsDTO;
 import com.lievasoft.dto.response.image.ImageSelectionResponse;
 import jakarta.persistence.*;
 
-import static com.lievasoft.statement.ImageQuery.*;
+import static com.lievasoft.statement.ImageQuery.IMAGE_SELECTION_PER_PLANT;
+import static com.lievasoft.statement.ImageQuery.IMAGE_SELECTION_PER_PLANT_QUERY;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity
@@ -14,11 +14,6 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
                 name = IMAGE_SELECTION_PER_PLANT,
                 query = IMAGE_SELECTION_PER_PLANT_QUERY,
                 resultSetMapping = "ImageSelectionResponse"
-        ),
-        @NamedNativeQuery(
-                name = FETCH_IMAGE_PLANT_CARDS,
-                query = FETCH_IMAGE_PLANT_CARDS_QUERY,
-                resultSetMapping = "ImageCardToPlantDetails"
         ),
 })
 @SqlResultSetMappings({
@@ -32,16 +27,6 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
                         }
                 )
         ),
-        @SqlResultSetMapping(
-                name = "ImageCardToPlantDetails",
-                classes = @ConstructorResult(
-                        targetClass = ImageToPlantDetailsDTO.class,
-                        columns = {
-                                @ColumnResult(name = "filename", type = String.class),
-                                @ColumnResult(name = "storage_path", type = String.class)
-                        }
-                )
-        )
 })
 public class Image {
 

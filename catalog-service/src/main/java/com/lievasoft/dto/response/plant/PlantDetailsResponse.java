@@ -2,7 +2,6 @@ package com.lievasoft.dto.response.plant;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.lievasoft.dto.mapping.CommonNameToPlantDetails;
-import com.lievasoft.dto.mapping.ImageToPlantDetailsDTO;
 import com.lievasoft.dto.mapping.PlantTaxonomy;
 
 import java.math.BigDecimal;
@@ -11,20 +10,24 @@ import java.util.List;
 
 public record PlantDetailsResponse(
         Long id,
+
         @JsonProperty("scientific_name")
         String scientificName,
+
         BigDecimal price,
+
         @JsonProperty("updated_at")
         LocalDateTime updatedAt,
+
         TaxonomyResponse taxonomy,
-        @JsonProperty("images_info")
-        List<ImageToPlantDetailsDTO> imagesToPlantDetailsDTO,
+
+        @JsonProperty("image_ids")
+        List<Long> imageIds,
+
         @JsonProperty("common_names")
         List<CommonNameToPlantDetails> commonNames
 ) {
-
-    public PlantDetailsResponse(PlantTaxonomy plantTaxonomy,
-                                List<ImageToPlantDetailsDTO> imagesToPlantDetailsDTO,
+    public PlantDetailsResponse(PlantTaxonomy plantTaxonomy, List<Long> imageIds,
                                 List<CommonNameToPlantDetails> commonNames) {
         this(
                 plantTaxonomy.id(),
@@ -39,7 +42,7 @@ public record PlantDetailsResponse(
                         plantTaxonomy.genus(),
                         plantTaxonomy.species()
                 ),
-                imagesToPlantDetailsDTO,
+                imageIds,
                 commonNames
         );
     }

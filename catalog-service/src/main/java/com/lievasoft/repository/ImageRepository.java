@@ -1,6 +1,5 @@
 package com.lievasoft.repository;
 
-import com.lievasoft.dto.mapping.ImageToPlantDetailsDTO;
 import com.lievasoft.dto.response.image.ImageSelectionResponse;
 import com.lievasoft.entity.Image;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
@@ -12,7 +11,6 @@ import org.jboss.logging.Logger;
 import java.util.List;
 import java.util.Map;
 
-import static com.lievasoft.statement.ImageQuery.FETCH_IMAGE_PLANT_CARDS;
 import static com.lievasoft.statement.ImageQuery.IMAGE_SELECTION_PER_PLANT;
 
 @ApplicationScoped
@@ -37,11 +35,10 @@ public class ImageRepository implements PanacheRepository<Image> {
                 });
     }
 
-    public List<ImageToPlantDetailsDTO> fetchImageUrlsByPlantId(Long plantId) {
-        return getEntityManager()
-                .createNamedQuery(FETCH_IMAGE_PLANT_CARDS, ImageToPlantDetailsDTO.class)
-                .setParameter("id", plantId)
-                .getResultList();
+    public List<Long> fetchImageIdsByPlantId(Long plantId) {
+        return find("SELECT id FROM Image WHERE plant.id = ?1", plantId)
+                .project(Long.class)
+                .list();
     }
 
     public Image findImagePlantBy(long plantId, long imageId) {

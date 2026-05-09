@@ -90,8 +90,8 @@ public class DefaultPlantService implements PlantService {
     public PlantDetailsResponse obtainPlantDetailsById(Long plantId) {
         var plantTaxonomy = plantRepository.fetchPlantTaxonomyById(plantId);
         var commonNamesToPlantDetails = commonNameRepository.fetchCommonNameToPlantDetails(plantId);
-        var imagesToPlantDetailsDTO = imageRepository.fetchImageUrlsByPlantId(plantId);
-        return new PlantDetailsResponse(plantTaxonomy, imagesToPlantDetailsDTO, commonNamesToPlantDetails);
+        var imageIds = imageRepository.fetchImageIdsByPlantId(plantId);
+        return new PlantDetailsResponse(plantTaxonomy, imageIds, commonNamesToPlantDetails);
 //        var key = "plant:details:%s".formatted(plantId);
 //        Map<String, String> redisPlantHash = hashCommands.hgetall(key);
 //
