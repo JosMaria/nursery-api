@@ -36,7 +36,7 @@ public class ImageRepository implements PanacheRepository<Image> {
     }
 
     public List<Long> fetchImageIdsByPlantId(Long plantId) {
-        return find("SELECT id FROM Image WHERE plant.id = ?1", plantId)
+        return find("SELECT id FROM Image WHERE plant.id = ?1 ORDER BY isSelected DESC", plantId)
                 .project(Long.class)
                 .list();
     }
